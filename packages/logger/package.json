@@ -1,0 +1,35 @@
+{
+  "name": "@jumo-monorepo/logger",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc -w",
+    "lint": "eslint \"src/**/*.ts*\" --max-warnings 0",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "@jumo-monorepo/jest-presets/node"
+  },
+  "devDependencies": {
+    "@jumo-monorepo/eslint-config": "*",
+    "@jumo-monorepo/jest-presets": "*",
+    "@jumo-monorepo/typescript-config": "*",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.18.0",
+    "eslint": "^9.34.0",
+    "jest": "^30.1.3",
+    "typescript": "~5.8.3"
+  },
+  "dependencies": {
+    "logform": "^2.7.0",
+    "winston": "^3.17.0",
+    "morgan": "^1.10.1"
+  }
+}

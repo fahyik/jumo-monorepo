@@ -1,0 +1,10 @@
+{
+  "extends": "@jumo-monorepo/typescript-config/react-library.json",
+  "include": ["src"],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "paths": {
+      "@jumo-monorepo/ui/*": ["./src/*"]
+    }
+  }
+}

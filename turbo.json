@@ -1,0 +1,45 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["npm_package_name", "npm_package_version"],
+  "tasks": {
+    "build": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "public/dist/**"],
+      "dependsOn": ["^build"],
+      "env": [
+        "NEXT_PUBLIC_API_HOST",
+        "NODE_ENV",
+        "CLUSTER_ENVIRONMENT",
+        "LOCAL_LOG_DUMP",
+        "PACKAGE_VERSION",
+        "PACKAGE_NAME",
+        "DB_HOSTNAME",
+        "DB_PORT",
+        "DB_NAME",
+        "DB_USERNAME",
+        "DB_PASSWORD",
+        "PORT",
+        "AUTH_AUDIENCE",
+        "AUTH_DOMAIN",
+        "AUTH_JWT_SECRET"
+      ]
+    },
+    "test": {
+      "outputs": ["coverage/**"],
+      "dependsOn": []
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    },
+    "start": {
+      "cache": false
+    }
+  }
+}
