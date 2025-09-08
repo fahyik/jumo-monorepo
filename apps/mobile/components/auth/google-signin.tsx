@@ -21,6 +21,7 @@ export function GoogleSignIn() {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
+        backgroundColor: "white",
       }}
       onPress={async () => {
         try {

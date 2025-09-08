@@ -41,7 +41,7 @@ export async function createServer() {
 
   // public
   app.use(
-    "/api",
+    "/",
     json({
       verify: (req, res, buf) => {
         // TODO: figure out how to augment types

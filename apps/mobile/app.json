@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "heyjumo",
-    "slug": "heyjumo",
+    "slug": "jumo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -20,11 +20,6 @@
       "edgeToEdgeEnabled": true,
       "package": "com.heyjumo.dev"
     },
-    // "web": {
-    //   "bundler": "metro",
-    //   "output": "static",
-    //   "favicon": "./assets/images/favicon.png"
-    // },
     "plugins": [
       "expo-router",
       [
@@ -45,6 +40,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b2c3a18b-aba6-4de0-8de0-89c9fa9e4cf8"
+      }
+    },
+    "owner": "heyjumo"
   }
 }
