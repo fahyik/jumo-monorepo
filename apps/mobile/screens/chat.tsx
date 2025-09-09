@@ -14,6 +14,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+
 export default function ChatScreen() {
   const [input, setInput] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
@@ -49,11 +52,15 @@ export default function ChatScreen() {
           {messages.map((m) => (
             <View key={m.id} style={{ marginVertical: 8 }}>
               <View>
-                <Text style={{ fontWeight: 700 }}>{m.role}</Text>
+                <ThemedText style={{ fontWeight: 700 }}>{m.role}</ThemedText>
                 {m.parts.map((part, i) => {
                   switch (part.type) {
                     case "text":
-                      return <Text key={`${m.id}-${i}`}>{part.text}</Text>;
+                      return (
+                        <ThemedText key={`${m.id}-${i}`}>
+                          {part.text}
+                        </ThemedText>
+                      );
                   }
                 })}
               </View>
@@ -71,7 +78,15 @@ export default function ChatScreen() {
 
         <View style={{ marginTop: 0 }}>
           <TextInput
-            style={{ padding: 16, backgroundColor: "white" }}
+            style={{
+              backgroundColor: "gray",
+              padding: 16,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: "#777575ff",
+              color: "white",
+            }}
+            placeholderTextColor={"lightgray"}
             placeholder="Say something..."
             value={input}
             onChange={(e) => setInput(e.nativeEvent.text)}

@@ -1,36 +1,36 @@
-import { StyleSheet, View, useColorScheme } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
+import { ThemedView } from "@/components/ThemedView";
 import { GoogleSignIn } from "@/components/auth/google-signin";
-import { Colors } from "@/constants/Colors";
+import { createThemedStyles } from "@/lib/utils";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function LoginScreen() {
-  const colorScheme = useColorScheme();
+  const styles = useThemedStyles(themedStyles);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme ?? "light"].background },
-      ]}
-    >
+    <ThemedView style={[styles.container]}>
       <View style={styles.content}>
         <HelloWave size={120}></HelloWave>
         <GoogleSignIn></GoogleSignIn>
       </View>
-    </View>
+    </ThemedView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    padding: 12,
-    height: "100%",
-    justifyContent: "center",
-  },
-  content: {
-    gap: 16,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
+
+const themedStyles = createThemedStyles(({ colors }) =>
+  StyleSheet.create({
+    container: {
+      padding: 12,
+      height: "100%",
+      justifyContent: "center",
+    },
+    content: {
+      gap: 16,
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  })
+);

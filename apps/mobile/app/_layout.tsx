@@ -1,7 +1,7 @@
 import {
   DarkTheme,
   DefaultTheme,
-  ThemeProvider,
+  ThemeProvider as NavThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -12,6 +12,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/lib/polyfills";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 function App() {
   const colorScheme = useColorScheme();
@@ -30,21 +31,25 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Protected guard={isLoggedIn}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack.Protected>
+      <NavThemeProvider
+        value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+      >
+        <ThemeProvider>
+          <Stack>
+            <Stack.Protected guard={isLoggedIn}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack.Protected>
 
-          <Stack.Protected guard={!isLoggedIn}>
-            <Stack.Screen name="login" options={{ headerShown: false }} />
-          </Stack.Protected>
+            <Stack.Protected guard={!isLoggedIn}>
+              <Stack.Screen name="login" options={{ headerShown: false }} />
+            </Stack.Protected>
 
-          <Stack.Screen name="+not-found" />
-        </Stack>
+            <Stack.Screen name="+not-found" />
+          </Stack>
 
-        <StatusBar style="auto" />
-      </ThemeProvider>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </NavThemeProvider>
     </SafeAreaProvider>
   );
 }
