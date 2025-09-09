@@ -4,7 +4,10 @@
  */
 export type Colors = {
   text: string;
+  foreground: string;
+  oppositeForeground: string;
   background: string;
+  backgroundMuted: string;
   tint: string;
   icon: string;
   tabIconDefault: string;
@@ -20,7 +23,10 @@ export const COLORS: {
 } = {
   light: {
     text: "#11181C",
+    foreground: "#11181C",
+    oppositeForeground: "#ECEDEE",
     background: "#F2F1ED",
+    backgroundMuted: "#d4d3cfff",
     tint: tintColorLight,
     icon: "#687076",
     tabIconDefault: "#687076",
@@ -28,7 +34,10 @@ export const COLORS: {
   },
   dark: {
     text: "#ECEDEE",
+    foreground: "#ECEDEE",
+    oppositeForeground: "#11181C",
     background: "#151718",
+    backgroundMuted: "#242728ff",
     tint: tintColorDark,
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",

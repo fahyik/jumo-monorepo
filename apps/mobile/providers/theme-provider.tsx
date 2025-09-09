@@ -1,10 +1,10 @@
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useMemo } from "react";
 
 import { COLORS, Colors } from "@/constants/styles/colors";
 import { Spacings } from "@/constants/styles/spacings";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-interface ThemeContextType {
+export interface ThemeContextType {
   colors: Colors;
   spacings: Spacings;
   isDark: boolean;
@@ -38,8 +38,12 @@ export function useTheme() {
 }
 
 export function useThemedStyles<T>(
-  styleFactory: (args: { colors: Colors; isDark: boolean }) => T
+  styleFactory: (args: ThemeContextType) => T
 ): T {
-  const { colors, isDark } = useTheme();
-  return styleFactory({ colors, isDark });
+  const { colors, isDark, spacings } = useTheme();
+
+  return useMemo(
+    () => styleFactory({ colors, isDark, spacings }),
+    [colors, isDark, spacings, styleFactory]
+  );
 }

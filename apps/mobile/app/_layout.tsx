@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { COLORS } from "@/constants/styles/colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/lib/polyfills";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
@@ -32,12 +33,23 @@ function App() {
   return (
     <SafeAreaProvider>
       <NavThemeProvider
-        value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        value={
+          colorScheme === "dark"
+            ? {
+                ...DarkTheme,
+                colors: {
+                  ...DarkTheme.colors,
+                  background: COLORS.dark.background,
+                },
+              }
+            : DefaultTheme
+        }
       >
         <ThemeProvider>
           <Stack>
             <Stack.Protected guard={isLoggedIn}>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(stacks)" options={{ headerShown: false }} />
             </Stack.Protected>
 
             <Stack.Protected guard={!isLoggedIn}>

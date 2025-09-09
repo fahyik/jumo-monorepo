@@ -1,6 +1,7 @@
 import { useChat } from "@ai-sdk/react";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { DefaultChatTransport } from "ai";
+import { BlurView } from "expo-blur";
+import { useRouter } from "expo-router";
 import { fetch as expoFetch } from "expo/fetch";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -10,14 +11,21 @@ import {
   ScrollView,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { createThemedStyles } from "@/lib/utils";
+import { useTheme, useThemedStyles } from "@/providers/theme-provider";
 
-export default function ChatScreen() {
+export function ChatScreen() {
+  const styles = useThemedStyles(themedStyles);
+  const router = useRouter();
+  const { colors } = useTheme();
+
   const [input, setInput] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
   const { messages, error, sendMessage, status } = useChat({
@@ -28,8 +36,6 @@ export default function ChatScreen() {
     onError: (error) => console.error(error, "ERROR"),
   });
 
-  const tabBarHeight = useBottomTabBarHeight();
-
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
@@ -37,26 +43,38 @@ export default function ChatScreen() {
   if (error) return <Text>{error.message}</Text>;
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={{ flex: 1 }}
+      edges={["top", "left", "right", "bottom"]}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{
-          flex: 1,
-          marginBottom: tabBarHeight,
-        }}
+        style={[styles.keyboardAvoidingView]}
       >
-        <ScrollView
-          ref={scrollViewRef}
-          style={{ flex: 1, paddingHorizontal: 16 }}
-        >
+        <ScrollView ref={scrollViewRef} style={styles.scrollView}>
           {messages.map((m) => (
-            <View key={m.id} style={{ marginVertical: 8 }}>
-              <View>
-                <ThemedText style={{ fontWeight: 700 }}>{m.role}</ThemedText>
+            <View
+              key={m.id}
+              style={[
+                styles.messageContainer,
+                m.role === "user"
+                  ? styles.userMessageContainer
+                  : styles.assistantMessageContainer,
+              ]}
+            >
+              <View
+                style={
+                  m.role === "user" ? styles.userBubble : styles.assistantBubble
+                }
+              >
                 {m.parts.map((part, i) => {
                   switch (part.type) {
                     case "text":
-                      return (
+                      return m.role === "user" ? (
+                        <Text key={`${m.id}-${i}`} style={styles.userText}>
+                          {part.text}
+                        </Text>
+                      ) : (
                         <ThemedText key={`${m.id}-${i}`}>
                           {part.text}
                         </ThemedText>
@@ -67,26 +85,19 @@ export default function ChatScreen() {
             </View>
           ))}
           {(status === "streaming" || status === "submitted") && (
-            <View style={{ marginVertical: 8, alignItems: "center" }}>
+            <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color="#0000ff" />
-              <Text style={{ marginTop: 4, fontSize: 12, color: "#666" }}>
+              <ThemedText style={styles.loadingText}>
                 AI is thinking...
-              </Text>
+              </ThemedText>
             </View>
           )}
         </ScrollView>
 
-        <View style={{ marginTop: 0 }}>
+        <View style={styles.inputContainer}>
           <TextInput
-            style={{
-              backgroundColor: "gray",
-              padding: 16,
-              borderRadius: 8,
-              borderWidth: 1,
-              borderColor: "#777575ff",
-              color: "white",
-            }}
-            placeholderTextColor={"lightgray"}
+            style={styles.messageInput}
+            // placeholderTextColor={"lightgray"}
             placeholder="Say something..."
             value={input}
             onChange={(e) => setInput(e.nativeEvent.text)}
@@ -98,7 +109,115 @@ export default function ChatScreen() {
             autoFocus={true}
           />
         </View>
+
+        {router.canGoBack() && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 8,
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <BlurView
+              intensity={50}
+              tint="systemChromeMaterial"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 30,
+                overflow: "hidden",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 30,
+                  // backgroundColor: "#ffffff",
+                  borderWidth: 1,
+                  borderColor: "#d3d1d180",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  router.back();
+                }}
+              >
+                <IconSymbol size={14} name="chevron.left" color={colors.text} />
+              </TouchableOpacity>
+            </BlurView>
+          </View>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
+
+const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+  container: {
+    flexDirection: "column",
+    gap: 8,
+    height: "100%",
+    padding: 12,
+  },
+  messageInput: {
+    backgroundColor: colors.backgroundMuted,
+
+    padding: 16,
+    borderRadius: 8,
+    color: colors.text,
+  },
+  userBubble: {
+    backgroundColor: colors.tint,
+    alignSelf: "flex-end",
+    maxWidth: "80%",
+    padding: 12,
+    borderRadius: 16,
+    marginVertical: 4,
+  },
+  userText: {
+    color: colors.oppositeForeground,
+  },
+  assistantBubble: {
+    backgroundColor: colors.backgroundMuted,
+    alignSelf: "flex-start",
+    maxWidth: "80%",
+    padding: 12,
+    borderRadius: 16,
+    marginVertical: 4,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 8,
+  },
+  messageContainer: {
+    flexDirection: "row",
+    marginVertical: 8,
+  },
+  userMessageContainer: {
+    justifyContent: "flex-end",
+  },
+  assistantMessageContainer: {
+    justifyContent: "flex-start",
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  inputContainer: {
+    padding: 8,
+  },
+  loadingContainer: {
+    marginVertical: 8,
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#666",
+  },
+}));

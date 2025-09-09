@@ -19,18 +19,16 @@ export function LoginScreen() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors }) =>
-  StyleSheet.create({
-    container: {
-      padding: 12,
-      height: "100%",
-      justifyContent: "center",
-    },
-    content: {
-      gap: 16,
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-  })
-);
+const themedStyles = createThemedStyles(({ colors }) => ({
+  container: {
+    padding: 12,
+    height: "100%",
+    justifyContent: "center",
+  },
+  content: {
+    gap: 16,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+}));

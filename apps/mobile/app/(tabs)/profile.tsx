@@ -12,7 +12,7 @@ export default function ProfileScreen() {
   const styles = useThemedStyles(themedStyles);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
       <ThemedView style={styles.container}>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -26,21 +26,21 @@ export default function ProfileScreen() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors }) =>
-  StyleSheet.create({
-    container: {
-      flexDirection: "column",
-      gap: 8,
-      height: "100%",
-      padding: 12,
-    },
-    button: {
-      borderWidth: 1,
-      padding: 12,
-      borderRadius: 8,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-    },
-  })
-);
+const themedStyles = createThemedStyles(({ colors }) => ({
+  container: {
+    flexDirection: "column",
+    gap: 8,
+    height: "100%",
+    padding: 12,
+  },
+  button: {
+    borderWidth: 1,
+    padding: 12,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: colors.backgroundMuted,
+    borderColor: colors.icon,
+  },
+}));

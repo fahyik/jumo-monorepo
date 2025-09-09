@@ -1,5 +1,12 @@
-import { Colors } from "@/constants/styles/colors";
+import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
-export const createThemedStyles = <T>(
-  styleFactory: (args: { colors: Colors; isDark: boolean }) => T
-) => styleFactory;
+import { ThemeContextType } from "@/providers/theme-provider";
+
+type StyleProp = ViewStyle | TextStyle | ImageStyle;
+type StylesObject = Record<string, StyleProp>;
+
+export const createThemedStyles = <T extends StylesObject>(
+  styleFactory: (args: ThemeContextType) => T
+) => {
+  return (args: ThemeContextType) => StyleSheet.create(styleFactory(args));
+};

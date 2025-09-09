@@ -1,4 +1,4 @@
-import ChatScreen from "@/screens/chat";
+import { ChatScreen } from "@/screens/chat";
 
 export default function Chat() {
   return <ChatScreen></ChatScreen>;
