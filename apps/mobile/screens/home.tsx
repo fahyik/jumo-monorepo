@@ -108,20 +108,21 @@ export function HomeScreen() {
             alignItems: "center",
           }}
         >
-          <TouchableOpacity
-            style={{
-              width: 60,
-              height: 60,
-              borderRadius: 30,
-              borderWidth: 1,
-              borderColor: "#d3d1d180",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={() => {}}
-          >
-            <IconSymbol size={28} name="camera.fill" color={colors.icon} />
-          </TouchableOpacity>
+          <Link href="/(stacks)/camera" asChild>
+            <TouchableOpacity
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 30,
+                borderWidth: 1,
+                borderColor: "#d3d1d180",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <IconSymbol size={28} name="camera.fill" color={colors.icon} />
+            </TouchableOpacity>
+          </Link>
         </BlurView>
       </View>
     </SafeAreaView>

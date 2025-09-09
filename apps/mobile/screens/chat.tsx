@@ -1,6 +1,5 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { fetch as expoFetch } from "expo/fetch";
 import { useEffect, useRef, useState } from "react";
@@ -11,13 +10,12 @@ import {
   ScrollView,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { BackButton } from "@/components/navigation/back";
 import { createThemedStyles } from "@/lib/utils";
 import { useTheme, useThemedStyles } from "@/providers/theme-provider";
 
@@ -51,6 +49,8 @@ export function ChatScreen() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={[styles.keyboardAvoidingView]}
       >
+        <BackButton />
+
         <ScrollView ref={scrollViewRef} style={styles.scrollView}>
           {messages.map((m) => (
             <View
@@ -109,50 +109,6 @@ export function ChatScreen() {
             autoFocus={true}
           />
         </View>
-
-        {router.canGoBack() && (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 8,
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <BlurView
-              intensity={50}
-              tint="systemChromeMaterial"
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 30,
-                overflow: "hidden",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 30,
-                  // backgroundColor: "#ffffff",
-                  borderWidth: 1,
-                  borderColor: "#d3d1d180",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={() => {
-                  router.back();
-                }}
-              >
-                <IconSymbol size={14} name="chevron.left" color={colors.text} />
-              </TouchableOpacity>
-            </BlurView>
-          </View>
-        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -167,7 +123,6 @@ const themedStyles = createThemedStyles(({ colors, isDark }) => ({
   },
   messageInput: {
     backgroundColor: colors.backgroundMuted,
-
     padding: 16,
     borderRadius: 8,
     color: colors.text,
@@ -194,6 +149,7 @@ const themedStyles = createThemedStyles(({ colors, isDark }) => ({
   scrollView: {
     flex: 1,
     paddingHorizontal: 8,
+    backgroundColor: colors.background,
   },
   messageContainer: {
     flexDirection: "row",
