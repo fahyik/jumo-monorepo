@@ -23,8 +23,7 @@ function App() {
 
   const { session, isLoading } = useAuth();
 
-  if (!loaded || isLoading) {
-    // Async font loading and auth loading
+  if (isLoading || !loaded) {
     return null;
   }
 
