@@ -1,9 +1,39 @@
 import { openai } from "@ai-sdk/openai";
-import { UIMessage, convertToModelMessages, streamText } from "ai";
+import {
+  UIMessage,
+  convertToModelMessages,
+  generateObject,
+  pipeUIMessageStreamToResponse,
+  streamObject,
+  streamText,
+} from "ai";
 import { Router } from "express";
 import { Request } from "express";
+import multer from "multer";
+import sharp from "sharp";
+import z from "zod";
 
+import { logger } from "../../logger";
 import { AuthenticatedRequest } from "../../middleware/interfaces";
+
+const memoryStorage = multer.memoryStorage();
+
+// File filter for images only
+const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only image files are allowed!"));
+  }
+};
+
+const uploadToMemory = multer({
+  storage: memoryStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: fileFilter,
+});
 
 export function apiRouter() {
   const router = Router();
@@ -27,6 +57,86 @@ export function apiRouter() {
 
     result.pipeUIMessageStreamToResponse(res);
   });
+
+  router.post(
+    "/upload-photo",
+    uploadToMemory.single("image"),
+    async (req, res) => {
+      try {
+        if (!req.file) {
+          return res
+            .status(400)
+            .json({ success: false, reason: "No file uploaded" });
+        }
+
+        // req.file.buffer contains the file data
+        // Upload to cloud storage (AWS S3, Google Cloud, etc.)
+        // const uploadResult = await uploadToCloudStorage(req.file.buffer);
+
+        const resizedBuffer = await sharp(req.file.buffer)
+          // .resize({ width: 512, height: 512, fit: "inside" })
+          .resize(256)
+          .toBuffer();
+
+        const result = await generateObject({
+          model: openai("gpt-4.1-mini"),
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: "Estimate the per 100g nutritional breakdown, the portion size and an absolute nutritional breakdown. If the image is not of food, return success false with a reason",
+                },
+                {
+                  type: "image",
+                  image: resizedBuffer,
+                },
+              ],
+            },
+          ],
+          schema: z.object({
+            success: z.boolean(),
+            data: z
+              .object({
+                name: z.string(),
+                description: z.string(),
+                nutritionPer100g: z.object({
+                  carbohydrates: z.number(),
+                  carbohydratesUnit: z.literal("g"),
+                  proteins: z.number(),
+                  proteinsUnit: z.literal("g"),
+                  fats: z.number(),
+                  fatsUnit: z.literal("g"),
+                  energy: z.number(),
+                  energyUnit: z.literal("kcal"),
+                }),
+                estimatedPortionSize: z.number(),
+                estimatedPortionSizeUnit: z.literal("g"),
+                totalNutritionForEstimatedPortion: z.object({
+                  carbohydrates: z.number(),
+                  carbohydratesUnit: z.literal("g"),
+                  proteins: z.number(),
+                  proteinsUnit: z.literal("g"),
+                  fats: z.number(),
+                  fatsUnit: z.literal("g"),
+                  energy: z.number(),
+                  energyUnit: z.literal("kcal"),
+                }),
+                notes: z.string().optional(),
+              })
+              .optional(),
+            reason: z.string().optional(),
+          }),
+        });
+
+        // result.pipeTextStreamToResponse(res);
+        res.json(result.object);
+      } catch (error) {
+        res.status(500).json({ error: "Upload failed" });
+      }
+    }
+  );
 
   return router;
 }
