@@ -16,12 +16,15 @@ export function GoogleSignIn() {
       activeOpacity={0.5}
       style={{
         borderWidth: 1,
-        padding: 12,
         borderRadius: 8,
         flexDirection: "row",
         alignItems: "center",
-        gap: 8,
-        backgroundColor: "white",
+        justifyContent: "center",
+        gap: 6,
+        backgroundColor: "#FFF",
+        borderColor: "#0000007c",
+        width: "100%",
+        height: 33,
       }}
       onPress={async () => {
         try {
@@ -55,9 +58,11 @@ export function GoogleSignIn() {
     >
       <Image
         source={require("@/assets/images/google.png")}
-        style={{ width: 20, height: 20 }}
+        style={{ width: 16, height: 16 }}
       />
-      <Text style={{ fontWeight: "bold" }}>Sign In With Google</Text>
+      <Text style={{ fontWeight: "bold", fontSize: 14 }}>
+        Sign in with Google
+      </Text>
     </TouchableOpacity>
   );
 }
