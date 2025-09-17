@@ -1,9 +1,11 @@
 import { BlurView } from "expo-blur";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { useRouter } from "expo-router";
-import { TouchableOpacity, View } from "react-native";
+import { DynamicColorIOS, TouchableOpacity, View } from "react-native";
 
 import { IconSymbol } from "../ui/IconSymbol";
 
+import { COLORS } from "@/constants/styles/colors";
 import { createThemedStyles } from "@/lib/utils";
 import { useTheme, useThemedStyles } from "@/providers/theme-provider";
 
@@ -15,15 +17,25 @@ export function BackButton() {
   return (
     router.canGoBack() && (
       <View style={styles.container}>
-        <BlurView
-          intensity={80}
-          tint="systemChromeMaterial"
-          style={styles.blurContainer}
+        <GlassView
+          style={[
+            styles.blurContainer,
+            {
+              backgroundColor: isLiquidGlassAvailable() ? "none" : "white",
+            },
+          ]}
         >
           <TouchableOpacity style={styles.button} onPress={() => router.back()}>
-            <IconSymbol size={14} name="chevron.left" color={colors.text} />
+            <IconSymbol
+              size={14}
+              name="chevron.left"
+              color={DynamicColorIOS({
+                dark: COLORS["dark"].text,
+                light: COLORS["light"].text,
+              })}
+            />
           </TouchableOpacity>
-        </BlurView>
+        </GlassView>
       </View>
     )
   );

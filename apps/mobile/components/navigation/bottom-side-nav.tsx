@@ -1,4 +1,5 @@
 import { BlurView } from "expo-blur";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { Link } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
 
@@ -13,31 +14,30 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
     <View
       style={{
         position: "absolute",
-        bottom: (bottom ?? 0) + 20,
-        right: 20,
+        bottom: (bottom ?? 0) + 28 + (isLiquidGlassAvailable() ? 0 : 100),
+        right: 28,
         flexDirection: "column",
-        gap: 16,
+        gap: 12,
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      <BlurView
-        intensity={80}
-        tint="systemChromeMaterial"
+      <GlassView
         style={{
-          width: 60,
-          height: 60,
+          width: 48,
+          height: 48,
           borderRadius: 30,
           overflow: "hidden",
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: isLiquidGlassAvailable() ? "none" : "white",
         }}
       >
         <Link href="/(stacks)/chat" asChild>
           <TouchableOpacity
             style={{
-              width: 60,
-              height: 60,
+              width: 48,
+              height: 48,
               borderRadius: 30,
               borderWidth: 1,
               borderColor: "#d3d1d180",
@@ -48,25 +48,24 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
             <IconSymbol size={28} name="message.fill" color={colors.icon} />
           </TouchableOpacity>
         </Link>
-      </BlurView>
+      </GlassView>
 
-      <BlurView
-        intensity={80}
-        tint="systemChromeMaterial"
+      <GlassView
         style={{
-          width: 60,
-          height: 60,
+          width: 48,
+          height: 48,
           borderRadius: 30,
           overflow: "hidden",
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: isLiquidGlassAvailable() ? "none" : "white",
         }}
       >
         <Link href="/(stacks)/camera" asChild>
           <TouchableOpacity
             style={{
-              width: 60,
-              height: 60,
+              width: 48,
+              height: 48,
               borderRadius: 30,
               borderWidth: 1,
               borderColor: "#d3d1d180",
@@ -77,7 +76,7 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
             <IconSymbol size={28} name="camera.fill" color={colors.icon} />
           </TouchableOpacity>
         </Link>
-      </BlurView>
+      </GlassView>
     </View>
   );
 }

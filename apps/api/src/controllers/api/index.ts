@@ -53,6 +53,7 @@ export function apiRouter() {
     const result = streamText({
       model: openai("gpt-5-nano-2025-08-07"),
       messages: convertToModelMessages(messages),
+
     });
 
     result.pipeUIMessageStreamToResponse(res);

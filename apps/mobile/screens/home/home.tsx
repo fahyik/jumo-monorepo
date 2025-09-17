@@ -1,7 +1,8 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { GlassContainer, GlassView } from "expo-glass-effect";
 import { Image } from "expo-image";
 import { useEffect } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -18,7 +19,7 @@ import { useThemedStyles } from "@/providers/theme-provider";
 export function HomeScreen() {
   const styles = useThemedStyles(themedStyles);
 
-  const bottomTabBarHeight = useBottomTabBarHeight();
+  const bottomTabBarHeight = 0;
   const bounceAnimation = useSharedValue(-40);
 
   const { session } = useAuth();
@@ -32,7 +33,7 @@ export function HomeScreen() {
   }));
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+    <>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={{
@@ -60,7 +61,6 @@ export function HomeScreen() {
             !
           </ThemedText>
         </View>
-
         <View style={{ flexDirection: "row", gap: 8 }}>
           <View
             style={{
@@ -147,7 +147,7 @@ export function HomeScreen() {
       </ScrollView>
 
       <BottomSideNav bottom={bottomTabBarHeight}></BottomSideNav>
-    </SafeAreaView>
+    </>
   );
 }
 
