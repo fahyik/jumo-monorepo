@@ -8,7 +8,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
 import { BottomSideNav } from "@/components/navigation/bottom-side-nav";
@@ -44,6 +43,7 @@ export function HomeScreen() {
         <View
           style={{
             padding: 12,
+
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",

@@ -9,7 +9,8 @@ import { supabase } from "@/lib/supabase";
 
 export function GoogleSignIn() {
   GoogleSignin.configure({
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_SIGNIN_CLIENT_ID,
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_SIGNIN_IOS_CLIENT_ID,
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_SIGNIN_WEB_CLIENT_ID,
   });
   return (
     <TouchableOpacity
@@ -20,11 +21,11 @@ export function GoogleSignIn() {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 6,
+        gap: 8,
         backgroundColor: "#FFF",
         borderColor: "#0000007c",
         width: "100%",
-        height: 33,
+        height: 37,
       }}
       onPress={async () => {
         try {
@@ -44,6 +45,7 @@ export function GoogleSignIn() {
             throw new Error("no ID token present!");
           }
         } catch (error: any) {
+          console.log(error);
           if (error.code === statusCodes.SIGN_IN_CANCELLED) {
             // user cancelled the login flow
           } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -58,9 +60,9 @@ export function GoogleSignIn() {
     >
       <Image
         source={require("@/assets/images/google.png")}
-        style={{ width: 16, height: 16 }}
+        style={{ width: 17, height: 17 }}
       />
-      <Text style={{ fontWeight: "bold", fontSize: 14 }}>
+      <Text style={{ fontWeight: "bold", fontSize: 16 }}>
         Sign in with Google
       </Text>
     </TouchableOpacity>

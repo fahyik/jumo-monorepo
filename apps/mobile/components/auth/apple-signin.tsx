@@ -59,9 +59,9 @@ export function AppleSignIn() {
     >
       <Image
         source={require("@/assets/images/apple.png")}
-        style={{ width: 30, height: 30 }}
+        style={{ width: 35, height: 35 }}
       />
-      <Text style={{ fontWeight: "bold", fontSize: 14 }}>
+      <Text style={{ fontWeight: "bold", fontSize: 16 }}>
         Sign in with Apple
       </Text>
     </TouchableOpacity>
@@ -71,13 +71,12 @@ export function AppleSignIn() {
 const styles = StyleSheet.create({
   button: {
     borderWidth: 1,
-
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 0,
     width: "100%",
-    height: 33,
+    height: 37,
   },
 });

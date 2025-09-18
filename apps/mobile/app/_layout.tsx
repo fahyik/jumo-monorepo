@@ -4,8 +4,10 @@ import {
   ThemeProvider as NavThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { View } from "react-native";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -15,6 +17,8 @@ import "@/lib/polyfills";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 
+SplashScreen.preventAutoHideAsync();
+
 function App() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -23,7 +27,15 @@ function App() {
 
   const { session, isLoading } = useAuth();
 
-  if (isLoading || !loaded) {
+  const ready = !isLoading && loaded;
+
+  useEffect(() => {
+    if (!ready) {
+      SplashScreen.hide();
+    }
+  }, [ready]);
+
+  if (!ready) {
     return null;
   }
 

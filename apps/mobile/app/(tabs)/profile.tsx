@@ -6,22 +6,23 @@ import { ThemedView } from "@/components/ThemedView";
 import { createThemedStyles } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 import { useThemedStyles } from "@/providers/theme-provider";
+import { HomeScreen } from "@/screens/home/home";
 
 export default function ProfileScreen() {
   const { signOut } = useAuth();
   const styles = useThemedStyles(themedStyles);
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
-      <ThemedView style={styles.container}>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={styles.button}
-          onPress={signOut}
-        >
-          <ThemedText style={{ fontWeight: "bold" }}>Sign Out</ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      {/* <ThemedView style={styles.container}> */}
+      <TouchableOpacity
+        activeOpacity={0.5}
+        style={styles.button}
+        onPress={signOut}
+      >
+        <ThemedText style={{ fontWeight: "bold" }}>Sign Out</ThemedText>
+      </TouchableOpacity>
+      {/* </ThemedView> */}
     </SafeAreaView>
   );
 }
@@ -32,6 +33,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     gap: 8,
     height: "100%",
     padding: 12,
+    backgroundColor: colors.background,
   },
   button: {
     borderWidth: 1,

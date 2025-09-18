@@ -1,3 +1,4 @@
+import { cerebras } from "@ai-sdk/cerebras";
 import { openai } from "@ai-sdk/openai";
 import {
   UIMessage,
@@ -51,9 +52,9 @@ export function apiRouter() {
     const { messages }: { messages: UIMessage[] } = req.body;
 
     const result = streamText({
-      model: openai("gpt-5-nano-2025-08-07"),
+      model: cerebras("llama3.1-8b"),
+      // model: openai("gpt-5-nano-2025-08-07"),
       messages: convertToModelMessages(messages),
-
     });
 
     result.pipeUIMessageStreamToResponse(res);

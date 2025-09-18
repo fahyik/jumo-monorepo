@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withSpring,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,10 +19,13 @@ import { useThemedStyles } from "@/providers/theme-provider";
 export function LoginScreen() {
   const styles = useThemedStyles(themedStyles);
 
-  const bounceAnimation = useSharedValue(-40);
+  const bounceAnimation = useSharedValue(-600);
 
   useEffect(() => {
-    bounceAnimation.value = withSpring(0, { damping: 50, stiffness: 3000 });
+    bounceAnimation.value = withDelay(
+      1000,
+      withSpring(0, { damping: 80, stiffness: 3000 })
+    );
   }, [bounceAnimation]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -35,7 +39,7 @@ export function LoginScreen() {
           <Animated.View style={animatedStyle}>
             <Image
               source={require("@/assets/images/app/bear_workout.png")}
-              style={{ height: 240, width: 240 }}
+              style={{ height: 280, width: 280 }}
             ></Image>
           </Animated.View>
           <AppleSignIn></AppleSignIn>
@@ -53,9 +57,10 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     justifyContent: "center",
   },
   content: {
-    gap: 16,
+    gap: 12,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 36,
   },
 }));
