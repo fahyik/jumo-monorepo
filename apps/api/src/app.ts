@@ -3,7 +3,7 @@ import cors from "cors";
 import express from "express";
 
 import { apiRouter } from "./controllers/api";
-import { dbConnection } from "./db";
+import { sql } from "./db";
 import { logger } from "./logger";
 import { auth } from "./middleware/auth";
 import { errorHandler } from "./middleware/error-handler";
@@ -64,6 +64,14 @@ export async function createServer() {
       })
     );
 
+  app.get("/", async (_req, res) => {
+    return res.json({
+      app: "jumo-backend",
+      version: process.env.npm_package_version,
+      env: process.env.APP_ENV,
+    });
+  });
+
   app.use(errorHandler);
 
   app.use((_req, res, _next) => {
@@ -71,7 +79,8 @@ export async function createServer() {
   });
 
   addBeforeExitHandler(async () => {
-    await dbConnection.destroy();
+    await sql.end();
+    logger.info("Db connection terminated");
   });
 
   return app;

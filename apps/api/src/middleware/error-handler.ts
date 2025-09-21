@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { UnauthorizedError } from "express-jwt";
+import { JwksRateLimitError } from "jwks-rsa";
 
 import { logger } from "../logger";
 
-// import { JwksRateLimitError } from "jwks-rsa";
-
-const isDev = process.env.CLUSTER_ENVIRONMENT !== "production";
+const isDev = process.env.APP_ENV !== "production";
 
 export function errorHandler(
   err: Error,
@@ -24,11 +23,11 @@ export function errorHandler(
     return;
   }
 
-  // if (err instanceof JwksRateLimitError) {
-  //   res.status(401);
-  //   res.json({ reason: "invalid_token" });
-  //   return;
-  // }
+  if (err instanceof JwksRateLimitError) {
+    res.status(401);
+    res.json({ reason: "unable_to_verify_token" });
+    return;
+  }
 
   logger.error(
     `Error while processing ${req.method} ${req.url}: ${err.message}`,

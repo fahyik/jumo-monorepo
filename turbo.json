@@ -9,7 +9,7 @@
       "env": [
         "NEXT_PUBLIC_API_HOST",
         "NODE_ENV",
-        "CLUSTER_ENVIRONMENT",
+        "APP_ENV",
         "LOCAL_LOG_DUMP",
         "PACKAGE_VERSION",
         "PACKAGE_NAME",
