@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
 import { BackButton } from "@/components/navigation/back";
+import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
 import { useTheme, useThemedStyles } from "@/providers/theme-provider";
 
@@ -26,10 +27,14 @@ export function ChatScreen() {
 
   const [input, setInput] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
+
   const { messages, error, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       fetch: expoFetch as unknown as typeof globalThis.fetch,
-      api: "http://localhost:3001/chat",
+      api: `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/chat`,
+      headers: async () => ({
+        Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+      }),
     }),
     onError: (error) => console.error(error, "ERROR"),
   });
