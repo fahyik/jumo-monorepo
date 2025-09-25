@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "heyjumo",
+    "name": "Jumo",
     "slug": "jumo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,11 +8,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "icon": {
-        "dark": "./assets/images/ios-dark.png",
-        "light": "./assets/images/ios-light.png",
-        "tinted": "./assets/images/ios-tinted.png"
-      },
+      "icon": "./assets/app.icon",
       "supportsTablet": true,
       "bundleIdentifier": "com.heyjumo.dev",
       "usesAppleSignIn": true,

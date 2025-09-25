@@ -19,12 +19,12 @@ export function HomeScreen() {
   const styles = useThemedStyles(themedStyles);
 
   const bottomTabBarHeight = 0;
-  const bounceAnimation = useSharedValue(-40);
+  const bounceAnimation = useSharedValue(-200);
 
   const { session } = useAuth();
 
   useEffect(() => {
-    bounceAnimation.value = withSpring(0, { damping: 6, stiffness: 150 });
+    bounceAnimation.value = withSpring(0, { damping: 60, stiffness: 1500 });
   }, [bounceAnimation]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -52,7 +52,7 @@ export function HomeScreen() {
         >
           <Animated.View style={animatedStyle}>
             <Image
-              source={require("@/assets/images/app/broccoli-face.png")}
+              source={require("@/assets/images/app/watermelon-skipping.png")}
               style={{ height: 120, width: 120 }}
             ></Image>
           </Animated.View>

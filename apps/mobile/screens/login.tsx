@@ -38,7 +38,7 @@ export function LoginScreen() {
         <View style={styles.content}>
           <Animated.View style={animatedStyle}>
             <Image
-              source={require("@/assets/images/app/bear_workout.png")}
+              source={require("@/assets/images/app/watermelon-press.png")}
               style={{ height: 280, width: 280 }}
             ></Image>
           </Animated.View>
