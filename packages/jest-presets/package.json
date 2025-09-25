@@ -7,6 +7,6 @@
     "node/jest-preset.js"
   ],
   "dependencies": {
-    "ts-jest": "^29.4.1"
+    "ts-jest": "^29.4.4"
   }
 }
