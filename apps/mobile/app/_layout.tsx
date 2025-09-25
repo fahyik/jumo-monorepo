@@ -13,7 +13,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { COLORS } from "@/constants/styles/colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import "@/lib/polyfills";
+// import "@/lib/polyfills";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 

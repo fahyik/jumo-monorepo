@@ -1,5 +1,8 @@
 const pkg = require("./package.json");
 
+const BUILD = 4;
+const VERSION_CODE = 1;
+
 if (!process.env.APP_VARIANT) {
   console.warn(
     '🔴🔴 Env variable APP_VARIANT is undefined. Using "Development"\n[Ignore warning if app config is not required]'
@@ -40,9 +43,9 @@ function getVariantDefaults(appVariant) {
         bundleId: "com.heyjumo.preview",
         scheme: "heyjumo",
         ios: {
-          associatedDomains: ["applinks:myclusters-app-dev.fly.dev"],
+          associatedDomains: [],
           googleSignInUrlScheme:
-            "com.googleusercontent.apps.775079319916-0iijlsjmhfrr23qt1jh422g000ceksdg",
+            "com.googleusercontent.apps.775079319916-84hqsredcutqo32otegrbflhfsa8n3bi",
         },
         android: {
           adaptiveIcon: {
@@ -89,6 +92,9 @@ export default {
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
+      ...(process.env.APP_VARIANT !== "production"
+        ? { buildNumber: BUILD.toString() }
+        : {}),
       icon: "./assets/app.icon",
       supportsTablet: true,
       bundleIdentifier: defaults.bundleId,
@@ -98,6 +104,9 @@ export default {
       },
     },
     android: {
+      ...(process.env.APP_VARIANT !== "production"
+        ? { versionCode: VERSION_CODE }
+        : {}),
       intentFilters: defaults.android.intentFilters,
       adaptiveIcon: defaults.android.adaptiveIcon,
       package: defaults.bundleId,
