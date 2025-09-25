@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { supabase } from "@/lib/supabase";
+
 interface NutritionData {
   name: string;
   description: string;
@@ -34,6 +36,7 @@ interface NutritionData {
 interface UploadResponse {
   success: boolean;
   data: NutritionData;
+  reason?: string;
 }
 
 export default function ModalImage() {
@@ -58,29 +61,34 @@ export default function ModalImage() {
         name: "image.jpg",
       } as any);
 
-      const response = await fetch("http://192.168.1.55:3001/upload-photo", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const token = (await supabase.auth.getSession()).data.session
+        ?.access_token;
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/upload-photo`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result: UploadResponse = await response.json();
 
-      console.log(result);
-
       if (result.success) {
         setNutritionData(result.data);
       } else {
-        setError(result.reason);
+        setError(result.reason || "");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 

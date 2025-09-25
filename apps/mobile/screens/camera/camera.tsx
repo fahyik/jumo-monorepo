@@ -39,10 +39,19 @@ export function CameraScreen() {
   const router = useRouter();
 
   const takePicture = async () => {
-    // router.push("/(stacks)/camera/modal");
-    // const photo = await ref.current?.takePictureAsync();
-    // console.log(photo);
-    // setUri(photo?.uri);
+    try {
+      const photo = await ref.current?.takePictureAsync();
+      if (photo?.uri) {
+        router.navigate({
+          pathname: "/(stacks)/camera/modal-image",
+          params: {
+            imageUri: photo.uri,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error taking picture:", error);
+    }
   };
 
   const showFocusBox = useCallback(
