@@ -52,8 +52,8 @@ export function apiRouter() {
     const { messages }: { messages: UIMessage[] } = req.body;
 
     const result = streamText({
-      model: cerebras("llama3.1-8b"),
-      // model: openai("gpt-5-nano-2025-08-07"),
+      // model: cerebras("llama3.1-8b"),
+      model: openai("gpt-4-turbo-2024-04-09"),
       messages: convertToModelMessages(messages),
     });
 

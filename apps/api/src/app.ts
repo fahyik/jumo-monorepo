@@ -39,20 +39,6 @@ export async function createServer() {
     );
   }
 
-  // public
-  app.use(
-    "/",
-    json({
-      verify: (req, res, buf) => {
-        // TODO: figure out how to augment types
-        // https://stackoverflow.com/questions/58049052/typescript-express-property-rawbody-does-not-exist-on-type-incomingmessage
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (req as any).rawBody = buf;
-      },
-    }),
-    apiRouter()
-  );
-
   // protected routes below
   app
     .use(urlencoded({ extended: true }))
@@ -71,6 +57,19 @@ export async function createServer() {
       env: process.env.APP_ENV,
     });
   });
+
+  app.use(
+    "/",
+    json({
+      verify: (req, res, buf) => {
+        // TODO: figure out how to augment types
+        // https://stackoverflow.com/questions/58049052/typescript-express-property-rawbody-does-not-exist-on-type-incomingmessage
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (req as any).rawBody = buf;
+      },
+    }),
+    apiRouter()
+  );
 
   app.use(errorHandler);
 
