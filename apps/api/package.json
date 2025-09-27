@@ -17,7 +17,7 @@
     "@ai-sdk/cerebras": "^1.0.18",
     "@ai-sdk/openai": "^2.0.27",
     "@jumo-monorepo/logger": "*",
-    "ai": "^5.0.37",
+    "ai": "^5.0.56",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
