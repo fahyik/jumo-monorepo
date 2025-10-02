@@ -1,15 +1,17 @@
-import { json, urlencoded } from "body-parser";
+import pkgBodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
 
-import { apiRouter } from "./controllers/api";
-import { sql } from "./db";
-import { logger } from "./logger";
-import { auth } from "./middleware/auth";
-import { errorHandler } from "./middleware/error-handler";
-import { addBeforeExitHandler } from "./server/process-lifecycle";
+import { apiRouter } from "./controllers/api/index.js";
+import { sql } from "./db/index.js";
+import { logger } from "./logger.js";
+import { auth } from "./middleware/auth.js";
+import { errorHandler } from "./middleware/error-handler.js";
+import { addBeforeExitHandler } from "./server/process-lifecycle.js";
 
 import { correlationIdMiddleware, getHttpLogger } from "@jumo-monorepo/logger";
+
+const { json, urlencoded } = pkgBodyParser;
 
 export async function createServer() {
   logger.debug(`🟠🟠🟠 creating server ..`);

@@ -14,8 +14,8 @@ import multer from "multer";
 import sharp from "sharp";
 import z from "zod";
 
-import { logger } from "../../logger";
-import { AuthenticatedRequest } from "../../middleware/interfaces";
+import { logger } from "../../logger.js";
+import { AuthenticatedRequest } from "../../middleware/interfaces.js";
 
 const memoryStorage = multer.memoryStorage();
 

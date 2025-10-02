@@ -2,6 +2,7 @@
   "extends": "@jumo-monorepo/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ES2015"],
+    "target": "ES2022",
     "outDir": "./dist",
     "rootDir": "./src"
   },

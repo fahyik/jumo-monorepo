@@ -1,6 +1,6 @@
-import { createServer } from "./app";
-import { logger } from "./logger";
-import { handleProcessTerminationEvents } from "./server/process-lifecycle";
+import { createServer } from "./app.js";
+import { logger } from "./logger.js";
+import { handleProcessTerminationEvents } from "./server/process-lifecycle.js";
 
 const port = process.env.PORT || "3001";
 

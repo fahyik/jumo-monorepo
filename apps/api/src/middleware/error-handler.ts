@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UnauthorizedError } from "express-jwt";
 import { JwksRateLimitError } from "jwks-rsa";
 
-import { logger } from "../logger";
+import { logger } from "../logger.js";
 
 const isDev = process.env.APP_ENV !== "production";
 

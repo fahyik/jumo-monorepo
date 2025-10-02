@@ -2,16 +2,31 @@
   "name": "api",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
     "dev": "TZ=UTC NODE_ENV=development DOTENV_CONFIG_PATH=./.env.development.local nodemon --delay 0.7 --exec \"tsx --inspect=0.0.0.0:9229 --no-cache --require dotenv/config ./src/index.ts\" -e .ts",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
-    "start": "TZ=UTC NODE_ENV=production DOTENV_CONFIG_PATH=./.env.production node -r dotenv/config ./dist/index.js",
-    "test": "jest --detectOpenHandles"
+    "start": "TZ=UTC NODE_ENV=production DOTENV_CONFIG_PATH=./.env.production node --import dotenv/config ./dist/index.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles"
   },
   "jest": {
-    "preset": "@jumo-monorepo/jest-presets/node"
+    "preset": "@jumo-monorepo/jest-presets/node",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    }
   },
   "dependencies": {
     "@ai-sdk/cerebras": "^1.0.18",
