@@ -120,6 +120,7 @@ export default {
     plugins: [
       "expo-apple-authentication",
       "expo-router",
+      "expo-web-browser",
       [
         "expo-splash-screen",
         {
