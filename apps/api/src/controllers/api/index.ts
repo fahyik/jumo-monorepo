@@ -54,6 +54,8 @@ export function apiRouter() {
     const result = streamText({
       // model: cerebras("llama3.1-8b"),
       model: openai("gpt-4-turbo-2024-04-09"),
+      system:
+        "Your name is Jumo. You are a professional nutritionist and health expert, offering advice on personal health. For any other questions or topic, you are to provide a generic response in the lines of 'I am unable to answer such questions.'",
       messages: convertToModelMessages(messages),
     });
 

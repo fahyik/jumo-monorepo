@@ -3,15 +3,18 @@ import { expressJwtSecret } from "jwks-rsa";
 
 const AUTH_AUDIENCE = process.env.AUTH_AUDIENCE;
 const AUTH_DOMAIN = process.env.AUTH_DOMAIN;
+const AUTH_SECRET = process.env.AUTH_SECRET;
 
 // Create middleware for checking the JWT
 export const auth = expressjwt({
-  secret: expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 2,
-    jwksUri: `${AUTH_DOMAIN}/.well-known/jwks.json`,
-  }) as GetVerificationKey,
+  secret: (process.env.APP_ENV === "local"
+    ? AUTH_SECRET
+    : expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 2,
+        jwksUri: `${AUTH_DOMAIN}/.well-known/jwks.json`,
+      })) as GetVerificationKey,
   // Validate the audience and the issuer.
   audience: AUTH_AUDIENCE,
   issuer: AUTH_DOMAIN,
