@@ -20,6 +20,10 @@ export function errorHandler(
     res.status(err.status);
     res.json({ reason: err.code });
 
+    if (isDev) {
+      logger.warn("Auth error", err);
+    }
+
     return;
   }
 
