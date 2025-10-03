@@ -10,6 +10,7 @@ import {
 } from "ai";
 import { Router } from "express";
 import { Request } from "express";
+import convert from "heic-convert";
 import multer from "multer";
 import sharp from "sharp";
 import z from "zod";
@@ -77,7 +78,19 @@ export function apiRouter() {
         // Upload to cloud storage (AWS S3, Google Cloud, etc.)
         // const uploadResult = await uploadToCloudStorage(req.file.buffer);
 
-        const resizedBuffer = await sharp(req.file.buffer)
+        let buffer = req.file.buffer;
+
+        if (req.file.mimetype === "image/heic") {
+          const converted = await convert({
+            // @ts-expect-error NOTE: it's the correct type
+            buffer: req.file.buffer,
+            format: "JPEG",
+            quality: 1,
+          });
+          buffer = Buffer.from(converted);
+        }
+
+        const resizedBuffer = await sharp(buffer)
           // .resize({ width: 512, height: 512, fit: "inside" })
           .resize(256)
           .toBuffer();
@@ -137,7 +150,8 @@ export function apiRouter() {
         // result.pipeTextStreamToResponse(res);
         res.json(result.object);
       } catch (error) {
-        res.status(500).json({ error: "Upload failed" });
+        logger.error(error);
+        res.status(500).json({ success: false, reason: "Upload failed" });
       }
     }
   );
