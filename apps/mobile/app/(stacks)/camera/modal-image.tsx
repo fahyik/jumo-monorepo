@@ -40,7 +40,7 @@ interface UploadResponse {
 }
 
 export default function ModalImage() {
-  const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
+  const { imageUri, mimeType } = useLocalSearchParams<{ imageUri: string; mimeType?: string }>();
   const [isLoading, setIsLoading] = useState(true);
   const [nutritionData, setNutritionData] = useState<NutritionData | null>(
     null
@@ -57,8 +57,8 @@ export default function ModalImage() {
       const formData = new FormData();
       formData.append("image", {
         uri: imageUri,
-        type: "image/jpeg",
-        name: "image.jpg",
+        type: mimeType ?? "image/jpeg",
+        name: "image",
       } as any);
 
       const token = (await supabase.auth.getSession()).data.session

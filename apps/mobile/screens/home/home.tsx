@@ -13,7 +13,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { BottomSideNav } from "@/components/navigation/bottom-side-nav";
 import { createThemedStyles } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
-import { useThemedStyles } from "@/providers/theme-provider";
+import { useTheme, useThemedStyles } from "@/providers/theme-provider";
 
 export function HomeScreen() {
   const styles = useThemedStyles(themedStyles);
@@ -22,6 +22,8 @@ export function HomeScreen() {
   const bounceAnimation = useSharedValue(-200);
 
   const { session } = useAuth();
+
+  const {colors} = useTheme()
 
   useEffect(() => {
     bounceAnimation.value = withSpring(0, { damping: 60, stiffness: 1500 });
@@ -65,7 +67,7 @@ export function HomeScreen() {
           <View
             style={{
               flex: 1,
-              backgroundColor: "#bcbcbcff",
+              backgroundColor: colors.backgroundMuted,
               height: 128,
               borderRadius: 16,
               padding: 16,
@@ -92,7 +94,7 @@ export function HomeScreen() {
           <View
             style={{
               flex: 1,
-              backgroundColor: "#bcbcbcff",
+              backgroundColor: colors.backgroundMuted,
               height: 128,
               borderRadius: 16,
               padding: 16,
@@ -119,7 +121,7 @@ export function HomeScreen() {
           <View
             style={{
               flex: 1,
-              backgroundColor: "#bcbcbcff",
+              backgroundColor: colors.backgroundMuted,
               height: 128,
               borderRadius: 16,
               padding: 16,

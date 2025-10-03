@@ -9,12 +9,12 @@ interface ImagePickerProps {
 
 export function ImagePicker({ onImageSelect }: ImagePickerProps) {
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ExpoImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: false,
-      aspect: [4, 3],
       quality: 1,
+      allowsMultipleSelection: false,
+      exif: true
     });
 
     if (!result.canceled) {

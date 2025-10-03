@@ -26,9 +26,7 @@ export function CameraScreen() {
   const [scannedBarcode, setScannedBarcode] =
     useState<BarcodeScanningResult | null>(null);
   const [isScanning, setIsScanning] = useState(true);
-
-  const [barcode, setBarcode] = useState("");
-  const [uri, setUri] = useState("");
+  const [isCameraActive, setIsCameraActive] = useState(true);
 
   const ref = useRef<CameraView>(null);
   const focusOpacity = useRef(new Animated.Value(0)).current;
@@ -41,11 +39,14 @@ export function CameraScreen() {
   const takePicture = async () => {
     try {
       const photo = await ref.current?.takePictureAsync();
+
       if (photo?.uri) {
+        setIsCameraActive(false);
         router.navigate({
           pathname: "/(stacks)/camera/modal-image",
           params: {
             imageUri: photo.uri,
+            mimeType: `image/${photo.format}`,
           },
         });
       }
@@ -85,8 +86,7 @@ export function CameraScreen() {
 
   const handleBarcodeScanned = useCallback(
     (scan: BarcodeScanningResult) => {
-      setBarcode(scan.data);
-
+      setIsCameraActive(false);
       const now = Date.now();
 
       // Throttle: Only process if enough time has passed since last scan
@@ -113,11 +113,11 @@ export function CameraScreen() {
     [isScanning, router, showFocusBox]
   );
 
-  useFocusEffect(() => {
-    if (barcode) {
-      setBarcode("");
-    }
-  });
+  useFocusEffect(
+    useCallback(() => {
+      setIsCameraActive(true);
+    }, [])
+  );
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -147,16 +147,15 @@ export function CameraScreen() {
         <BackButton />
       </View>
 
-      {!barcode && (
-        <CameraView
-          ref={ref}
-          style={styles.camera}
-          barcodeScannerSettings={{
-            barcodeTypes: ["qr", "ean13", "ean8"],
-          }}
-          onBarcodeScanned={handleBarcodeScanned}
-        />
-      )}
+      <CameraView
+        ref={ref}
+        style={styles.camera}
+        active={isCameraActive}
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr", "ean13", "ean8"],
+        }}
+        onBarcodeScanned={handleBarcodeScanned}
+      />
 
       {scannedBarcode && scannedBarcode.bounds && (
         <Animated.View
@@ -173,19 +172,6 @@ export function CameraScreen() {
         />
       )}
 
-      {/* <Animated.View
-        style={[
-          styles.focusBox,
-          {
-            opacity: 1,
-            left: 121,
-            top: 399,
-            width: 200,
-            height: 100,
-          },
-        ]}
-      /> */}
-
       <View
         style={[styles.optionsContainer, { height: insets.bottom * 2 + 72 }]}
       >
@@ -199,10 +185,12 @@ export function CameraScreen() {
         >
           <ImagePicker
             onImageSelect={(asset) => {
+              setIsCameraActive(false);
               router.navigate({
                 pathname: "/(stacks)/camera/modal-image",
                 params: {
                   imageUri: asset.uri,
+                  mimeType: asset.mimeType,
                 },
               });
             }}
