@@ -31,7 +31,7 @@ export function ChatScreen() {
   const { messages, error, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       fetch: expoFetch as unknown as typeof globalThis.fetch,
-      api: `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/chat`,
+      api: `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/ai/chat`,
       headers: async () => ({
         Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
       }),

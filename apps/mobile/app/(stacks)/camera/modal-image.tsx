@@ -40,7 +40,10 @@ interface UploadResponse {
 }
 
 export default function ModalImage() {
-  const { imageUri, mimeType } = useLocalSearchParams<{ imageUri: string; mimeType?: string }>();
+  const { imageUri, mimeType } = useLocalSearchParams<{
+    imageUri: string;
+    mimeType?: string;
+  }>();
   const [isLoading, setIsLoading] = useState(true);
   const [nutritionData, setNutritionData] = useState<NutritionData | null>(
     null
@@ -65,7 +68,7 @@ export default function ModalImage() {
         ?.access_token;
 
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/upload-photo`,
+        `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/ai/upload-photo`,
         {
           method: "POST",
           body: formData,
