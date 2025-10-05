@@ -9,7 +9,7 @@ Jumo is a nutrition and health app monorepo built with Turborepo. The stack incl
 - **Mobile**: Expo/React Native app with Expo Router
 - **API**: Express.js backend with JWT authentication
 - **Supabase**: Local Supabase instance for database and auth
-- **Shared packages**: TypeScript configs, ESLint configs, Jest presets, logger, and UI components
+- **Shared packages**: TypeScript configs, ESLint configs, Jest presets, logger, UI components, and shared type definitions
 
 ## Commands
 
@@ -127,6 +127,7 @@ EXPO_PUBLIC_SUPABSE_ANONYMOUS_KEY=<anon-key>
 - Turborepo manages build dependencies (packages build before apps)
 - Shared configs in packages: TypeScript, ESLint, Jest
 - Logger package provides winston-based logging with correlation IDs and HTTP logging
+- Interfaces package (`@jumo-monorepo/interfaces`) provides shared TypeScript type definitions for domain models and API contracts, used across all apps for type safety
 - Internal packages use `*` version for local dependencies
 
 ## Key Technical Notes
@@ -138,3 +139,7 @@ EXPO_PUBLIC_SUPABSE_ANONYMOUS_KEY=<anon-key>
 - **API Inspector**: Development server runs with --inspect flag on 0.0.0.0:9229
 - **Timezone**: API runs with TZ=UTC
 - **CORS**: Configured for localhost and Vercel preview domains in non-production
+
+## Coding instructions
+
+- Avoid unnecessary descriptive comments. Variable and function names should be self-explanatory.

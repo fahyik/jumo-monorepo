@@ -1,2 +1,3 @@
 // Domain and API TypeScript type definitions
-export {};
+
+export type * from "./domain/meals.js";
