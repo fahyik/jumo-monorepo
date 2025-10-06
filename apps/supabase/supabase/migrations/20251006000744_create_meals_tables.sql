@@ -27,21 +27,23 @@ CREATE TABLE IF NOT EXISTS jumo.provider_foods (
 
 CREATE TABLE IF NOT EXISTS jumo.meals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE RESTRICT,
   name TEXT,
   notes TEXT,
   consumed_at TIMESTAMPTZ NOT NULL,
+  deleted_at TIMESTAMPTZ NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS jumo.meal_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  meal_id UUID NOT NULL REFERENCES jumo.meals(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE RESTRICT,
+  meal_id UUID NOT NULL REFERENCES jumo.meals(id) ON DELETE RESTRICT,
   provider_food_id UUID NOT NULL REFERENCES jumo.provider_foods(id) ON DELETE RESTRICT,
   quantity NUMERIC NOT NULL,
   unit TEXT NOT NULL,
+  deleted_at TIMESTAMPTZ NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -55,9 +57,11 @@ CREATE TABLE IF NOT EXISTS jumo.meal_items_nutrients (
 
 CREATE INDEX idx_meals_user_id ON jumo.meals(user_id);
 CREATE INDEX idx_meals_consumed_at ON jumo.meals(consumed_at);
+CREATE INDEX idx_meals_deleted_at ON jumo.meals(deleted_at);
 CREATE INDEX idx_meal_items_user_id ON jumo.meal_items(user_id);
 CREATE INDEX idx_meal_items_meal_id ON jumo.meal_items(meal_id);
 CREATE INDEX idx_meal_items_provider_food_id ON jumo.meal_items(provider_food_id);
+CREATE INDEX idx_meal_items_deleted_at ON jumo.meal_items(deleted_at);
 CREATE INDEX idx_provider_foods_provider ON jumo.provider_foods(provider);
 CREATE INDEX idx_meal_items_nutrients_meal_item_id ON jumo.meal_items_nutrients(meal_item_id);
 CREATE INDEX idx_meal_items_nutrients_nutrient_id ON jumo.meal_items_nutrients(nutrient_id);

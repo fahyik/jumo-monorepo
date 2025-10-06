@@ -1,41 +1,18 @@
-export enum MealType {
-  BREAKFAST = 'breakfast',
-  LUNCH = 'lunch',
-  DINNER = 'dinner',
-  SNACK = 'snack',
-}
-
-export enum MeasurementUnit {
-  GRAMS = 'g',
-  MILLILITERS = 'ml',
-  OUNCES = 'oz',
-  CUPS = 'cups',
-  TABLESPOONS = 'tbsp',
-  TEASPOONS = 'tsp',
-  PIECES = 'pieces',
-  SERVING = 'serving',
-}
-
-export interface NutritionInfo {
-  calories: number;
-  protein: number;
-  carbohydrates: number;
-  fat: number;
-  fiber?: number;
-  sugar?: number;
-  sodium?: number;
-}
-
-export interface MealItem {
+export interface Nutrient {
   id: string;
-  mealId: string;
-  foodName: string;
-  quantity: number;
-  unit: MeasurementUnit;
-  nutrition: NutritionInfo;
-  brand?: string;
-  barcode?: string;
-  notes?: string;
+  name: string;
+  unit: string;
+  translationKey?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProviderFood {
+  id: string;
+  provider: string;
+  providerId: string;
+  rawData: Record<string, unknown>;
+  data: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,12 +20,23 @@ export interface MealItem {
 export interface Meal {
   id: string;
   userId: string;
-  type: MealType;
-  consumedAt: Date;
   name?: string;
   notes?: string;
-  photoUrls?: string[];
-  items: MealItem[];
+  consumedAt: Date;
+  deletedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface MealItem {
+  id: string;
+  userId: string;
+  mealId: string;
+  providerFoodId: string;
+  quantity: number;
+  unit: string;
+  nutrients: { nutrient: Nutrient; amount: number }[];
+  deletedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

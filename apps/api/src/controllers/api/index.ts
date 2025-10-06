@@ -3,6 +3,7 @@ import { Router } from "express";
 import { AuthenticatedRequest } from "../../middleware/interfaces.js";
 import { aiRouter } from "./ai.js";
 import { foodsRouter } from "./foods/index.js";
+import { mealsRouter } from "./meals/index.js";
 
 export function apiRouter() {
   const router = Router();
@@ -18,6 +19,7 @@ export function apiRouter() {
 
   router.use("/ai", aiRouter());
   router.use("/foods", foodsRouter());
+  router.use("/meals", mealsRouter());
 
   return router;
 }
