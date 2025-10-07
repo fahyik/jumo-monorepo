@@ -13,8 +13,8 @@
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "test": "turbo run test",
-    "start": "turbo run start"
+    "start": "turbo run start",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
