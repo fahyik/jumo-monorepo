@@ -6,7 +6,7 @@ GRANT USAGE ON SCHEMA "jumo" TO "authenticated";
 GRANT USAGE ON SCHEMA "jumo" TO "service_role";
 
 CREATE TABLE IF NOT EXISTS jumo.nutrients (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
   unit TEXT NOT NULL,
   translation_key TEXT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS jumo.meal_items (
 
 CREATE TABLE IF NOT EXISTS jumo.meal_items_nutrients (
   meal_item_id UUID NOT NULL REFERENCES jumo.meal_items(id) ON DELETE CASCADE,
-  nutrient_id UUID NOT NULL REFERENCES jumo.nutrients(id) ON DELETE RESTRICT,
+  nutrient_id TEXT NOT NULL REFERENCES jumo.nutrients(id) ON DELETE RESTRICT,
   amount NUMERIC NOT NULL,
   PRIMARY KEY (meal_item_id, nutrient_id)
 );

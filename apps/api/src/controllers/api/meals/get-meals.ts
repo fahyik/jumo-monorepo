@@ -1,14 +1,8 @@
 import { NextFunction, Response } from "express";
-import { z } from "zod";
+import { getMealsQuerySchema } from "@jumo-monorepo/interfaces";
 
 import { AuthenticatedRequest } from "../../../middleware/interfaces.js";
 import { getMeals as getMealsService } from "../../../services/meals/get-meals.js";
-
-const getMealsQuerySchema = z.object({
-  includeDeleted: z.enum(["true", "false"]).optional(),
-  limit: z.string().optional(),
-  offset: z.string().optional(),
-});
 
 export async function getMeals(
   req: AuthenticatedRequest,

@@ -1,12 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { z } from "zod";
+import { getFoodsQuerySchema } from "@jumo-monorepo/interfaces";
 
 import { getFoods as offGetFoods } from "../../../services/open-food-facts/get-foods.js";
-
-const getFoodsQuerySchema = z.object({
-  type: z.literal(["branded", "generic"]),
-  search: z.string(),
-});
 
 export async function getFoods(
   req: Request,

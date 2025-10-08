@@ -1,20 +1,8 @@
 import { NextFunction, Response } from "express";
-import { z } from "zod";
+import { createMealItemSchema } from "@jumo-monorepo/interfaces";
 
 import { AuthenticatedRequest } from "../../../../middleware/interfaces.js";
 import { createMealItem as createMealItemService } from "../../../../services/meal-items/create-meal-item.js";
-
-const createItemSchema = z.object({
-  providerFoodId: z.string().uuid(),
-  quantity: z.number().positive(),
-  unit: z.string(),
-  nutrients: z.array(
-    z.object({
-      nutrientId: z.string().uuid(),
-      amount: z.number(),
-    })
-  ),
-});
 
 export async function createItem(
   req: AuthenticatedRequest,
@@ -34,7 +22,7 @@ export async function createItem(
       return;
     }
 
-    const validation = createItemSchema.safeParse(req.body);
+    const validation = createMealItemSchema.safeParse(req.body);
     if (!validation.success) {
       res.status(400).json({ success: false, reason: validation.error });
       return;

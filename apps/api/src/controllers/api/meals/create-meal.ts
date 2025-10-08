@@ -1,29 +1,8 @@
 import { NextFunction, Response } from "express";
-import { z } from "zod";
+import { createMealSchema } from "@jumo-monorepo/interfaces";
 
 import { AuthenticatedRequest } from "../../../middleware/interfaces.js";
 import { createMeal as createMealService } from "../../../services/meals/create-meal.js";
-
-const createMealSchema = z.object({
-  name: z.string().optional(),
-  notes: z.string().optional(),
-  consumedAt: z.coerce.date(),
-  items: z
-    .array(
-      z.object({
-        providerFoodId: z.string().uuid(),
-        quantity: z.number().positive(),
-        unit: z.string(),
-        nutrients: z.array(
-          z.object({
-            nutrientId: z.string().uuid(),
-            amount: z.number(),
-          })
-        ),
-      })
-    )
-    .optional(),
-});
 
 export async function createMeal(
   req: AuthenticatedRequest,

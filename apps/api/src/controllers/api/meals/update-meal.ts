@@ -1,14 +1,8 @@
 import { NextFunction, Response } from "express";
-import { z } from "zod";
+import { updateMealSchema } from "@jumo-monorepo/interfaces";
 
 import { AuthenticatedRequest } from "../../../middleware/interfaces.js";
 import { updateMeal as updateMealService } from "../../../services/meals/update-meal.js";
-
-const updateMealSchema = z.object({
-  name: z.string().optional(),
-  notes: z.string().optional(),
-  consumedAt: z.coerce.date().optional(),
-});
 
 export async function updateMeal(
   req: AuthenticatedRequest,
