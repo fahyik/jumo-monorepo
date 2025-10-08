@@ -22,6 +22,7 @@
     "@react-navigation/native": "^7.1.6",
     "@stardazed/streams-text-encoding": "^1.0.2",
     "@supabase/supabase-js": "^2.57.2",
+    "@tanstack/react-query": "^5.90.2",
     "@ungap/structured-clone": "^1.3.0",
     "ai": "^5.0.60",
     "expo": "54.0.12",

@@ -9,7 +9,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { HelloWave } from "@/components/HelloWave";
 import { ThemedView } from "@/components/ThemedView";
 import { AppleSignIn } from "@/components/auth/apple-signin";
 import { GoogleSignIn } from "@/components/auth/google-signin";
@@ -19,17 +18,17 @@ import { useThemedStyles } from "@/providers/theme-provider";
 export function LoginScreen() {
   const styles = useThemedStyles(themedStyles);
 
-  const bounceAnimation = useSharedValue(-600);
+  const bounceAnimation = useSharedValue(0);
 
   useEffect(() => {
     bounceAnimation.value = withDelay(
       1000,
-      withSpring(0, { damping: 80, stiffness: 3000 })
+      withSpring(1, { damping: 80, stiffness: 3000 })
     );
   }, [bounceAnimation]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: bounceAnimation.value }],
+    transform: [{ scale: bounceAnimation.value }],
   }));
 
   return (
@@ -38,7 +37,7 @@ export function LoginScreen() {
         <View style={styles.content}>
           <Animated.View style={animatedStyle}>
             <Image
-              source={require("@/assets/images/app/watermelon-press.png")}
+              source={require("@/assets/images/icon-egg.png")}
               style={{ height: 280, width: 280 }}
             ></Image>
           </Animated.View>

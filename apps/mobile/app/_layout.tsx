@@ -7,7 +7,6 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { View } from "react-native";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -15,6 +14,7 @@ import { COLORS } from "@/constants/styles/colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 // import "@/lib/polyfills";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
+import { QueryProvider } from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 
 SplashScreen.preventAutoHideAsync();
@@ -79,8 +79,10 @@ function App() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <QueryProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </QueryProvider>
   );
 }
