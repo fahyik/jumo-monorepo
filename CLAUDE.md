@@ -143,3 +143,5 @@ EXPO_PUBLIC_SUPABSE_ANONYMOUS_KEY=<anon-key>
 ## Coding instructions
 
 - Avoid unnecessary descriptive comments. Variable and function names should be self-explanatory.
+- Use kebab-case for all filenames (e.g., `query-provider.tsx`, not `QueryProvider.tsx`)
+- When committing to git, make sure changes in different apps/packages are committed separately
