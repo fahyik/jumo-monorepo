@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { AuthenticatedRequest } from "../../middleware/interfaces.js";
-import { aiRouter } from "./ai.js";
+import { aiRouter } from "./ai/index.js";
 import { foodsRouter } from "./foods/index.js";
 import { mealsRouter } from "./meals/index.js";
 

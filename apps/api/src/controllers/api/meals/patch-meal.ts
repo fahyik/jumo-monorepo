@@ -4,7 +4,7 @@ import { updateMealSchema } from "@jumo-monorepo/interfaces";
 import { AuthenticatedRequest } from "../../../middleware/interfaces.js";
 import { updateMeal as updateMealService } from "../../../services/meals/update-meal.js";
 
-export async function updateMeal(
+export async function patchMeal(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
