@@ -4,6 +4,7 @@
  */
 export type Colors = {
   text: string;
+  textMuted: string;
   foreground: string;
   oppositeForeground: string;
   background: string;
@@ -23,6 +24,7 @@ export const COLORS: {
 } = {
   light: {
     text: "#11181C",
+    textMuted: "#666",
     foreground: "#11181C",
     oppositeForeground: "#ECEDEE",
     background: "#F2F1ED",
@@ -34,6 +36,7 @@ export const COLORS: {
   },
   dark: {
     text: "#ECEDEE",
+    textMuted: "#666",
     foreground: "#ECEDEE",
     oppositeForeground: "#11181C",
     background: "#151718",
