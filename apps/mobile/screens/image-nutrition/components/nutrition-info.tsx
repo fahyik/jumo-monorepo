@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { useState } from "react";
+import { Image, Text, TextInput, View } from "react-native";
 
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -33,20 +34,46 @@ interface NutritionData {
 
 interface NutritionInfoProps {
   data: NutritionData;
+  imageUri: string;
 }
 
-export function NutritionInfo({ data }: NutritionInfoProps) {
+export function NutritionInfo({ data, imageUri }: NutritionInfoProps) {
   const styles = useThemedStyles(themedStyles);
+  const [portionSize, setPortionSize] = useState(
+    data.estimatedPortionSize.toString()
+  );
+
+  // Calculate adjusted nutrition based on user's portion size
+  const userPortionSize = parseFloat(portionSize) || data.estimatedPortionSize;
+  const ratio = userPortionSize / data.estimatedPortionSize;
+
+  const adjustedNutrition = {
+    energy: Math.round(data.totalNutritionForEstimatedPortion.energy * ratio),
+    carbohydrates: Math.round(
+      data.totalNutritionForEstimatedPortion.carbohydrates * ratio * 10
+    ) / 10,
+    proteins: Math.round(
+      data.totalNutritionForEstimatedPortion.proteins * ratio * 10
+    ) / 10,
+    fats: Math.round(
+      data.totalNutritionForEstimatedPortion.fats * ratio * 10
+    ) / 10,
+  };
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.description}>{data.description}</Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.title}>{data.name}</Text>
+        </View>
+        <Image source={{ uri: imageUri }} style={styles.headerImage} />
       </View>
+      <Text style={styles.description}>{data.description}</Text>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Nutrition per 100g</Text>
+        <Text style={[styles.sectionTitle, styles.sectionTitleWithMargin]}>
+          Nutrition per 100g
+        </Text>
         <View style={styles.nutrientList}>
           <View style={styles.nutrientRow}>
             <Text style={styles.nutrientLabel}>Energy:</Text>
@@ -78,36 +105,45 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
       </View>
 
       <View style={styles.portionSection}>
-        <Text style={styles.sectionTitle}>
-          Estimated Portion ({data.estimatedPortionSize}
-          {data.estimatedPortionSizeUnit})
-        </Text>
+        <View style={styles.portionHeaderRow}>
+          <Text style={styles.sectionTitle}>Your Portion</Text>
+          <View style={styles.portionInputContainer}>
+            <TextInput
+              style={styles.portionInput}
+              value={portionSize}
+              onChangeText={setPortionSize}
+              keyboardType="decimal-pad"
+              selectTextOnFocus
+            />
+            <Text style={styles.portionUnit}>{data.estimatedPortionSizeUnit}</Text>
+          </View>
+        </View>
         <View style={styles.nutrientList}>
           <View style={styles.nutrientRow}>
             <Text style={styles.nutrientLabel}>Energy:</Text>
             <Text style={styles.nutrientValue}>
-              {data.totalNutritionForEstimatedPortion.energy}{" "}
+              {adjustedNutrition.energy}{" "}
               {data.totalNutritionForEstimatedPortion.energyUnit}
             </Text>
           </View>
           <View style={styles.nutrientRow}>
             <Text style={styles.nutrientLabel}>Carbohydrates:</Text>
             <Text style={styles.nutrientValue}>
-              {data.totalNutritionForEstimatedPortion.carbohydrates}{" "}
+              {adjustedNutrition.carbohydrates}{" "}
               {data.totalNutritionForEstimatedPortion.carbohydratesUnit}
             </Text>
           </View>
           <View style={styles.nutrientRow}>
             <Text style={styles.nutrientLabel}>Proteins:</Text>
             <Text style={styles.nutrientValue}>
-              {data.totalNutritionForEstimatedPortion.proteins}{" "}
+              {adjustedNutrition.proteins}{" "}
               {data.totalNutritionForEstimatedPortion.proteinsUnit}
             </Text>
           </View>
           <View style={styles.nutrientRow}>
             <Text style={styles.nutrientLabel}>Fats:</Text>
             <Text style={styles.nutrientValue}>
-              {data.totalNutritionForEstimatedPortion.fats}{" "}
+              {adjustedNutrition.fats}{" "}
               {data.totalNutritionForEstimatedPortion.fatsUnit}
             </Text>
           </View>
@@ -126,10 +162,22 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   container: {
     gap: 16,
   },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  headerImage: {
+    width: "25%",
+    aspectRatio: 1,
+    borderRadius: 8,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 8,
     color: colors.text,
   },
   description: {
@@ -147,6 +195,33 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     padding: 16,
     borderRadius: 8,
   },
+  portionHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  portionInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  portionInput: {
+    backgroundColor: "white",
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    fontSize: 16,
+    fontWeight: "600",
+    minWidth: 60,
+    textAlign: "center",
+    color: colors.text,
+  },
+  portionUnit: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text,
+  },
   notesSection: {
     backgroundColor: "#fff3e0",
     padding: 16,
@@ -155,8 +230,10 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 12,
     color: colors.text,
+  },
+  sectionTitleWithMargin: {
+    marginBottom: 12,
   },
   nutrientList: {
     gap: 8,

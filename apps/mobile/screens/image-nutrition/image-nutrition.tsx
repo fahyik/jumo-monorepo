@@ -2,7 +2,7 @@ import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { NutritionInfo } from "./components/nutrition-info";
-import { useImageUpload } from "./hooks/useImageUpload";
+import { useImageUpload } from "./hooks/use-image-upload";
 
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -32,9 +32,11 @@ export function ImageNutritionScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: imageUri }} style={styles.image} />
-      </View>
+      {(isLoading || error) && (
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        </View>
+      )}
 
       <ScrollView
         style={styles.scrollView}
@@ -53,7 +55,9 @@ export function ImageNutritionScreen({
           </View>
         )}
 
-        {nutritionData && <NutritionInfo data={nutritionData} />}
+        {nutritionData && (
+          <NutritionInfo data={nutritionData} imageUri={imageUri} />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
