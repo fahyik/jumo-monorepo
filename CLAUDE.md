@@ -81,6 +81,14 @@ Jumo is a nutrition and health app monorepo built with Turborepo. The stack incl
 - **Authentication**: Supabase client with AsyncStorage persistence and auto-refresh
 - **Components**: All generic components are organised inside `/components/**`
 - **Screens**: All screens are organized inside the `/screens/**` There should be no code inside the routing folder `app/**`. All sub components are then organised in subfolders for e.g. `/screens/<screen-name>/components/**`
+- **Styling**: Follow the themed styles pattern for all screens
+  - Import `createThemedStyles` from `@/lib/utils` and `useThemedStyles` from `@/providers/theme-provider`
+  - Use `useThemedStyles(themedStyles)` hook at the top of components
+  - Define styles at bottom of file using `createThemedStyles(({ colors, isDark, spacings }) => ({ ... }))`
+  - Avoid inline styles - extract all styles to the themedStyles definition
+  - Use theme colors instead of hardcoded values (e.g., `colors.text`, `colors.background`, `colors.tint`)
+  - Only use inline styles for dynamic positioning that depends on runtime values (e.g., SafeArea insets)
+  - See `screens/login.tsx`, `screens/chat/chat.tsx`, or `screens/image-nutrition/image-nutrition.tsx` for examples
 
 ### Environment Variables
 
