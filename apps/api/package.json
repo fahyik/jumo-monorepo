@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@ai-sdk/cerebras": "^1.0.22",
-    "@ai-sdk/openai": "^2.0.44",
+    "@ai-sdk/openai": "^2.0.46",
     "@jumo-monorepo/logger": "*",
     "ai": "^5.0.60",
     "body-parser": "^2.2.0",
