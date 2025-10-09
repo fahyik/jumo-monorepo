@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import type { Meal, MealItem } from "../domain/meals.js";
+import type { ApiEndpoint } from "./api-endpoint.js";
+
 // Meal schemas
 export const createMealSchema = z.object({
   name: z.string().optional(),
@@ -60,8 +63,49 @@ export const updateMealItemSchema = z.object({
     .optional(),
 });
 
-export type CreateMealInput = z.infer<typeof createMealSchema>;
-export type UpdateMealInput = z.infer<typeof updateMealSchema>;
-export type GetMealsQuery = z.infer<typeof getMealsQuerySchema>;
-export type CreateMealItemInput = z.infer<typeof createMealItemSchema>;
-export type UpdateMealItemInput = z.infer<typeof updateMealItemSchema>;
+// API endpoint types
+export type CreateMeal = ApiEndpoint<
+  z.infer<typeof createMealSchema>,
+  never,
+  never,
+  Meal
+>;
+
+export type UpdateMeal = ApiEndpoint<
+  z.infer<typeof updateMealSchema>,
+  never,
+  { id: string },
+  Meal
+>;
+
+export type GetMeal = ApiEndpoint<never, never, { id: string }, Meal>;
+
+export type GetMeals = ApiEndpoint<
+  never,
+  z.infer<typeof getMealsQuerySchema>,
+  never,
+  Meal[]
+>;
+
+export type DeleteMeal = ApiEndpoint<never, never, { id: string }, void>;
+
+export type CreateMealItem = ApiEndpoint<
+  z.infer<typeof createMealItemSchema>,
+  never,
+  { mealId: string },
+  MealItem
+>;
+
+export type UpdateMealItem = ApiEndpoint<
+  z.infer<typeof updateMealItemSchema>,
+  never,
+  { mealId: string; id: string },
+  MealItem
+>;
+
+export type DeleteMealItem = ApiEndpoint<
+  never,
+  never,
+  { mealId: string; id: string },
+  void
+>;
