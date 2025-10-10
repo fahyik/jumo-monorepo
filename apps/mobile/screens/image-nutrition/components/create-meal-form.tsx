@@ -1,11 +1,22 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Text, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
+
+const mealFormSchema = z.object({
+  mealName: z.string().min(1, "Meal name is required").trim(),
+  notes: z.string().optional(),
+  consumedAt: z.date(),
+});
+
+type MealFormData = z.infer<typeof mealFormSchema>;
 
 interface CreateMealFormProps {
   onSubmit: (mealName: string, notes: string, consumedAt: Date) => void;
@@ -19,6 +30,7 @@ interface CreateMealFormProps {
     proteins: number;
     fats: number;
   };
+  isSubmitting?: boolean;
 }
 
 export function CreateMealForm({
@@ -28,17 +40,26 @@ export function CreateMealForm({
   portionSize,
   portionUnit,
   adjustedNutrition,
+  isSubmitting = false,
 }: CreateMealFormProps) {
   const styles = useThemedStyles(themedStyles);
-  const [mealName, setMealName] = useState("");
-  const [notes, setNotes] = useState("");
-  const [consumedAt, setConsumedAt] = useState(new Date());
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  const handleSubmit = () => {
-    if (mealName.trim()) {
-      onSubmit(mealName, notes, consumedAt);
-    }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<MealFormData>({
+    resolver: zodResolver(mealFormSchema),
+    defaultValues: {
+      mealName: "",
+      notes: "",
+      consumedAt: new Date(),
+    },
+  });
+
+  const onFormSubmit = (data: MealFormData) => {
+    onSubmit(data.mealName, data.notes || "", data.consumedAt);
   };
 
   const formatDateTime = (date: Date) => {
@@ -98,68 +119,89 @@ export function CreateMealForm({
         </View>
       </View>
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Time of meal</Text>
-        <TouchableOpacity
-          style={styles.dateButton}
-          activeOpacity={0.7}
-          onPress={() => {
-            setIsDatePickerOpen(true);
-          }}
-        >
-          <Text style={styles.dateButtonText}>
-            {formatDateTime(consumedAt)}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <Controller
+        control={control}
+        name="consumedAt"
+        render={({ field: { value, onChange } }) => (
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Time of meal</Text>
+            <TouchableOpacity
+              style={styles.dateButton}
+              activeOpacity={0.7}
+              onPress={() => setIsDatePickerOpen(true)}
+            >
+              <Text style={styles.dateButtonText}>
+                {formatDateTime(value)}
+              </Text>
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              minuteInterval={5}
+              open={isDatePickerOpen}
+              date={value}
+              onConfirm={(date) => {
+                setIsDatePickerOpen(false);
+                onChange(date);
+              }}
+              onCancel={() => setIsDatePickerOpen(false)}
+              mode="datetime"
+              maximumDate={new Date()}
+            />
+          </View>
+        )}
+      />
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Meal Name</Text>
-        <BottomSheetTextInput
-          style={styles.input}
-          value={mealName}
-          onChangeText={setMealName}
-          placeholder="e.g., Breakfast, Lunch, Snack..."
-          placeholderTextColor="#999"
-        />
-      </View>
+      <Controller
+        control={control}
+        name="mealName"
+        render={({ field: { value, onChange, onBlur } }) => (
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Meal Name</Text>
+            <BottomSheetTextInput
+              style={[styles.input, errors.mealName && styles.inputError]}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="e.g., Breakfast, Lunch, Snack..."
+              placeholderTextColor="#999"
+            />
+            {errors.mealName && (
+              <Text style={styles.errorText}>{errors.mealName.message}</Text>
+            )}
+          </View>
+        )}
+      />
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Notes (Optional)</Text>
-        {/* NOTE: keyboard doesnt scroll up for multi-line inputs */}
-        <BottomSheetTextInput
-          style={[styles.input, styles.textArea]}
-          value={notes}
-          onChangeText={setNotes}
-          placeholder="Add any notes about this meal..."
-          placeholderTextColor="#999"
-          multiline
-          numberOfLines={4}
-          textAlignVertical="top"
-        />
-      </View>
-
-      <DatePicker
-        modal
-        minuteInterval={5}
-        open={isDatePickerOpen}
-        date={consumedAt}
-        onConfirm={(date) => {
-          setIsDatePickerOpen(false);
-          setConsumedAt(date);
-        }}
-        onCancel={() => {
-          setIsDatePickerOpen(false);
-        }}
-        mode="datetime"
-        maximumDate={new Date()}
+      <Controller
+        control={control}
+        name="notes"
+        render={({ field: { value, onChange, onBlur } }) => (
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Notes (Optional)</Text>
+            <BottomSheetTextInput
+              style={[styles.input, styles.textArea]}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="Add any notes about this meal..."
+              placeholderTextColor="#999"
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </View>
+        )}
       />
 
       <View style={styles.buttonGroup}>
-        <Button variant="primary" onPress={handleSubmit}>
-          Create Meal
+        <Button
+          variant="primary"
+          onPress={handleSubmit(onFormSubmit)}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Creating..." : "Create Meal"}
         </Button>
-        <Button variant="secondary" onPress={onCancel}>
+        <Button variant="secondary" onPress={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
       </View>
@@ -236,6 +278,15 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     paddingVertical: 12,
     fontSize: 16,
     color: colors.text,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: colors.danger,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: 12,
+    marginTop: 4,
   },
   textArea: {
     minHeight: 100,

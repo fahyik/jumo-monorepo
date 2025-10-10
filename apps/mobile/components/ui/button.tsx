@@ -8,6 +8,7 @@ interface ButtonProps {
   children: string;
   variant?: "primary" | "secondary";
   style?: ViewStyle;
+  disabled?: boolean;
 }
 
 export function Button({
@@ -15,6 +16,7 @@ export function Button({
   children,
   variant = "primary",
   style,
+  disabled = false,
 }: ButtonProps) {
   const styles = useThemedStyles(themedStyles);
 
@@ -26,9 +28,19 @@ export function Button({
       : styles.secondaryButtonText;
 
   return (
-    <Pressable style={[buttonStyle, style]} onPress={onPress}>
+    <Pressable
+      style={[buttonStyle, disabled && styles.buttonDisabled, style]}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
+    >
       {({ pressed }) => (
-        <Text style={[textStyle, pressed && styles.buttonPressed]}>
+        <Text
+          style={[
+            textStyle,
+            pressed && !disabled && styles.buttonPressed,
+            disabled && styles.buttonTextDisabled,
+          ]}
+        >
           {children}
         </Text>
       )}
@@ -63,5 +75,11 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   },
   buttonPressed: {
     opacity: 0.7,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonTextDisabled: {
+    opacity: 0.5,
   },
 }));

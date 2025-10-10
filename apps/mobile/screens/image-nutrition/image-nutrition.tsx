@@ -1,8 +1,10 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
+import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -28,6 +30,7 @@ import { useImageUpload } from "./hooks/use-image-upload";
 
 import { ModalClose } from "@/components/navigation/modal-close";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { useCreateMeal } from "@/hooks/use-create-meal";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -51,6 +54,8 @@ export function ImageNutritionScreen({
 
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
+
+  const createMealMutation = useCreateMeal();
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -82,21 +87,60 @@ export function ImageNutritionScreen({
     bottomSheetRef.current?.present();
   };
 
-  const handleMealFormSubmit = (
+  const handleMealFormSubmit = async (
     mealName: string,
     notes: string,
     consumedAt: Date
   ) => {
-    if (mealData) {
-      console.log("Meal created:", {
-        mealName,
-        notes,
+    if (!mealData) return;
+
+    try {
+      await createMealMutation.mutateAsync({
+        name: mealName,
+        notes: notes || undefined,
         consumedAt,
-        ...mealData,
+        items: [
+          {
+            providerFoodId: mealData.nutritionData.providerFoodId,
+            quantity: mealData.portionSize,
+            unit: mealData.nutritionData.estimatedPortionSizeUnit,
+            nutrients: [
+              {
+                nutrientId: "energy",
+                amount: mealData.adjustedNutrition.energy,
+              },
+              {
+                nutrientId: "carbohydrate",
+                amount: mealData.adjustedNutrition.carbohydrates,
+              },
+              {
+                nutrientId: "protein",
+                amount: mealData.adjustedNutrition.proteins,
+              },
+              {
+                nutrientId: "fat",
+                amount: mealData.adjustedNutrition.fats,
+              },
+            ],
+          },
+        ],
       });
+
+      bottomSheetRef.current?.close();
       setMealData(null);
+
+      Alert.alert("Success", "Meal created successfully!", [
+        {
+          text: "OK",
+          onPress: () => router.back(),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        error instanceof Error ? error.message : "Failed to create meal"
+      );
     }
-    bottomSheetRef.current?.close();
   };
 
   const handleMealFormCancel = () => {
@@ -182,6 +226,7 @@ export function ImageNutritionScreen({
             portionSize={mealData.portionSize}
             portionUnit={mealData.nutritionData.estimatedPortionSizeUnit}
             adjustedNutrition={mealData.adjustedNutrition}
+            isSubmitting={createMealMutation.isPending}
           />
         )}
       </BottomSheet>
