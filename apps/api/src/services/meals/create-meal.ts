@@ -1,11 +1,12 @@
 import { sql } from "../../db/index.js";
+
 import type { Meal, MealItem } from "@jumo-monorepo/interfaces";
 
 export interface CreateMealInput {
   userId: string;
   name?: string;
   notes?: string;
-  consumedAt: Date;
+  consumedAt: string;
   items?: Array<{
     providerFoodId: string;
     quantity: number;
@@ -14,7 +15,9 @@ export interface CreateMealInput {
   }>;
 }
 
-export async function createMeal(input: CreateMealInput): Promise<Meal & { items: MealItem[] }> {
+export async function createMeal(
+  input: CreateMealInput
+): Promise<Meal & { items: MealItem[] }> {
   return await sql.begin(async (sql) => {
     const [meal] = await sql<Meal[]>`
       INSERT INTO jumo.meals (user_id, name, notes, consumed_at)
@@ -52,7 +55,7 @@ export async function createMeal(input: CreateMealInput): Promise<Meal & { items
         if (item.nutrients.length > 0) {
           await sql`
             INSERT INTO jumo.meal_items_nutrients (meal_item_id, nutrient_id, amount)
-            VALUES ${sql(item.nutrients.map(n => [mealItem.id, n.nutrientId, n.amount]))}
+            VALUES ${sql(item.nutrients.map((n) => [mealItem.id, n.nutrientId, n.amount]))}
           `;
         }
 

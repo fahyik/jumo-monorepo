@@ -3,8 +3,31 @@ export interface Nutrient {
   name: string;
   unit: string;
   translationKey?: string;
+  parentId?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+interface ProviderFoodNutrientPer100g {
+  id: string;
+  providerNutrientId: string | null;
+  unit: string;
+  amount: number;
+}
+
+export interface ProviderFoodData {
+  name: string;
+  description: string;
+  servingSize: string;
+  servingSizeUnit: string;
+  nutrients: ProviderFoodNutrientPer100g[];
+  image:
+    | {
+        type: "storage";
+        bucket: string;
+        path: string;
+      }
+    | { type: "external"; url: string };
 }
 
 export interface ProviderFood {
@@ -26,6 +49,8 @@ export interface Meal {
   deletedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+  items?: MealItem[];
+  nutrients?: { nutrient: Nutrient; amount: number }[];
 }
 
 export interface MealItem {

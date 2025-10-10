@@ -4,31 +4,10 @@ import type { Meal, MealItem } from "../domain/meals.js";
 import type { ApiEndpoint } from "./api-endpoint.js";
 
 // Meal schemas
-export const createMealSchema = z.object({
-  name: z.string().optional(),
-  notes: z.string().optional(),
-  consumedAt: z.coerce.date(),
-  items: z
-    .array(
-      z.object({
-        providerFoodId: z.uuid(),
-        quantity: z.number().positive(),
-        unit: z.string(),
-        nutrients: z.array(
-          z.object({
-            nutrientId: z.string(),
-            amount: z.number(),
-          })
-        ),
-      })
-    )
-    .optional(),
-});
-
 export const updateMealSchema = z.object({
   name: z.string().optional(),
   notes: z.string().optional(),
-  consumedAt: z.coerce.date().optional(),
+  consumedAt: z.iso.datetime().optional(),
 });
 
 export const getMealsQuerySchema = z.object({
@@ -37,9 +16,8 @@ export const getMealsQuerySchema = z.object({
   offset: z.string().optional(),
 });
 
-// Meal item schemas
 export const createMealItemSchema = z.object({
-  providerFoodId: z.uuid(),
+  providerFoodId: z.string(),
   quantity: z.number().positive(),
   unit: z.string(),
   nutrients: z.array(
@@ -61,6 +39,13 @@ export const updateMealItemSchema = z.object({
       })
     )
     .optional(),
+});
+
+export const createMealSchema = z.object({
+  name: z.string().optional(),
+  notes: z.string().optional(),
+  consumedAt: z.iso.datetime(),
+  items: z.array(createMealItemSchema).optional(),
 });
 
 // API endpoint types
