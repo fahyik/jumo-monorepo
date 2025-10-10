@@ -1,5 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -13,13 +13,13 @@ import { useThemedStyles } from "@/providers/theme-provider";
 const mealFormSchema = z.object({
   mealName: z.string().min(1, "Meal name is required").trim(),
   notes: z.string().optional(),
-  consumedAt: z.date(),
+  consumedAt: z.iso.datetime(),
 });
 
 type MealFormData = z.infer<typeof mealFormSchema>;
 
 interface CreateMealFormProps {
-  onSubmit: (mealName: string, notes: string, consumedAt: Date) => void;
+  onSubmit: (mealName: string, notes: string, consumedAt: string) => void;
   onCancel: () => void;
   foodName: string;
   portionSize: number;
@@ -54,7 +54,7 @@ export function CreateMealForm({
     defaultValues: {
       mealName: "",
       notes: "",
-      consumedAt: new Date(),
+      consumedAt: new Date().toISOString(),
     },
   });
 
@@ -131,14 +131,14 @@ export function CreateMealForm({
               onPress={() => setIsDatePickerOpen(true)}
             >
               <Text style={styles.dateButtonText}>
-                {formatDateTime(value)}
+                {formatDateTime(new Date(value))}
               </Text>
             </TouchableOpacity>
             <DatePicker
               modal
               minuteInterval={5}
               open={isDatePickerOpen}
-              date={value}
+              date={new Date(value)}
               onConfirm={(date) => {
                 setIsDatePickerOpen(false);
                 onChange(date);

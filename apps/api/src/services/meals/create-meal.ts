@@ -1,19 +1,15 @@
 import { sql } from "../../db/index.js";
 
-import type { Meal, MealItem } from "@jumo-monorepo/interfaces";
+import type {
+  CreateMeal,
+  Meal,
+  MealItem,
+  ProviderFood,
+} from "@jumo-monorepo/interfaces";
 
-export interface CreateMealInput {
+type CreateMealInput = {
   userId: string;
-  name?: string;
-  notes?: string;
-  consumedAt: string;
-  items?: Array<{
-    providerFoodId: string;
-    quantity: number;
-    unit: string;
-    nutrients: Array<{ nutrientId: string; amount: number }>;
-  }>;
-}
+} & CreateMeal["body"];
 
 export async function createMeal(
   input: CreateMealInput
@@ -37,6 +33,23 @@ export async function createMeal(
 
     if (input.items && input.items.length > 0) {
       for (const item of input.items) {
+        // Fetch provider food data
+        const [providerFood] = await sql<ProviderFood[]>`
+          SELECT
+            id,
+            provider,
+            provider_id as "providerId",
+            data as "foodData",
+            created_at as "createdAt",
+            updated_at as "updatedAt"
+          FROM jumo.provider_foods
+          WHERE id = ${item.providerFoodId}
+        `;
+
+        if (!providerFood) {
+          throw new Error(`Provider food not found: ${item.providerFoodId}`);
+        }
+
         const [mealItem] = await sql<MealItem[]>`
           INSERT INTO jumo.meal_items (user_id, meal_id, provider_food_id, quantity, unit)
           VALUES (${input.userId}, ${meal.id}, ${item.providerFoodId}, ${item.quantity}, ${item.unit})
@@ -52,10 +65,18 @@ export async function createMeal(
             updated_at as "updatedAt"
         `;
 
-        if (item.nutrients.length > 0) {
+        // Calculate nutrients based on quantity
+        // Provider food nutrients are per 100g, so we need to scale them
+        const multiplier = item.quantity / 100;
+        const nutrients = providerFood.foodData.nutrients.map((nutrient) => ({
+          nutrientId: nutrient.id,
+          amount: nutrient.amount * multiplier,
+        }));
+
+        if (nutrients.length > 0) {
           await sql`
             INSERT INTO jumo.meal_items_nutrients (meal_item_id, nutrient_id, amount)
-            VALUES ${sql(item.nutrients.map((n) => [mealItem.id, n.nutrientId, n.amount]))}
+            VALUES ${sql(nutrients.map((n) => [mealItem.id, n.nutrientId, n.amount]))}
           `;
         }
 

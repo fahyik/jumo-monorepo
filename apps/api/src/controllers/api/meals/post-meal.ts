@@ -1,8 +1,9 @@
 import { NextFunction, Response } from "express";
-import { createMealSchema } from "@jumo-monorepo/interfaces";
 
 import { AuthenticatedRequest } from "../../../middleware/interfaces.js";
 import { createMeal as createMealService } from "../../../services/meals/create-meal.js";
+
+import { createMealSchema } from "@jumo-monorepo/interfaces";
 
 export async function postMeal(
   req: AuthenticatedRequest,

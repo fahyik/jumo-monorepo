@@ -1,16 +1,32 @@
 import { sql } from "../../db/index.js";
-import type { MealItem } from "@jumo-monorepo/interfaces";
 
-export interface CreateMealItemInput {
+import type { CreateMealItem, MealItem, ProviderFood } from "@jumo-monorepo/interfaces";
+
+type CreateMealItemInput = {
   userId: string;
-  mealId: string;
-  providerFoodId: string;
-  quantity: number;
-  unit: string;
-  nutrients: Array<{ nutrientId: string; amount: number }>;
-}
+} & CreateMealItem["body"] &
+  CreateMealItem["params"];
 
-export async function createMealItem(input: CreateMealItemInput): Promise<MealItem> {
+export async function createMealItem(
+  input: CreateMealItemInput
+): Promise<MealItem> {
+  // Fetch provider food data
+  const [providerFood] = await sql<ProviderFood[]>`
+    SELECT
+      id,
+      provider,
+      provider_id as "providerId",
+      data as "foodData",
+      created_at as "createdAt",
+      updated_at as "updatedAt"
+    FROM jumo.provider_foods
+    WHERE id = ${input.providerFoodId}
+  `;
+
+  if (!providerFood) {
+    throw new Error(`Provider food not found: ${input.providerFoodId}`);
+  }
+
   const [mealItem] = await sql<MealItem[]>`
     INSERT INTO jumo.meal_items (user_id, meal_id, provider_food_id, quantity, unit)
     VALUES (${input.userId}, ${input.mealId}, ${input.providerFoodId}, ${input.quantity}, ${input.unit})
@@ -26,10 +42,18 @@ export async function createMealItem(input: CreateMealItemInput): Promise<MealIt
       updated_at as "updatedAt"
   `;
 
-  if (input.nutrients.length > 0) {
+  // Calculate nutrients based on quantity
+  // Provider food nutrients are per 100g, so we need to scale them
+  const multiplier = input.quantity / 100;
+  const nutrients = providerFood.foodData.nutrients.map((nutrient) => ({
+    nutrientId: nutrient.id,
+    amount: nutrient.amount * multiplier,
+  }));
+
+  if (nutrients.length > 0) {
     await sql`
       INSERT INTO jumo.meal_items_nutrients (meal_item_id, nutrient_id, amount)
-      VALUES ${sql(input.nutrients.map(n => [mealItem.id, n.nutrientId, n.amount]))}
+      VALUES ${sql(nutrients.map((n) => [mealItem.id, n.nutrientId, n.amount]))}
     `;
   }
 

@@ -28,6 +28,8 @@ import { CreateMealForm } from "./components/create-meal-form";
 import { AdjustedNutrition, NutritionInfo } from "./components/nutrition-info";
 import { useImageUpload } from "./hooks/use-image-upload";
 
+import { ProviderFood } from "@jumo-monorepo/interfaces";
+
 import { ModalClose } from "@/components/navigation/modal-close";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { useCreateMeal } from "@/hooks/use-create-meal";
@@ -47,7 +49,7 @@ export function ImageNutritionScreen({
   const colorScheme = useColorScheme();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const [mealData, setMealData] = useState<{
-    nutritionData: any;
+    nutritionData: ProviderFood;
     portionSize: number;
     adjustedNutrition: AdjustedNutrition;
   } | null>(null);
@@ -79,7 +81,7 @@ export function ImageNutritionScreen({
   );
 
   const handleCreateMeal = (
-    nutritionData: any,
+    nutritionData: ProviderFood,
     portionSize: number,
     adjustedNutrition: AdjustedNutrition
   ) => {
@@ -90,7 +92,7 @@ export function ImageNutritionScreen({
   const handleMealFormSubmit = async (
     mealName: string,
     notes: string,
-    consumedAt: Date
+    consumedAt: string
   ) => {
     if (!mealData) return;
 
@@ -101,27 +103,9 @@ export function ImageNutritionScreen({
         consumedAt,
         items: [
           {
-            providerFoodId: mealData.nutritionData.providerFoodId,
+            providerFoodId: mealData.nutritionData.id,
             quantity: mealData.portionSize,
-            unit: mealData.nutritionData.estimatedPortionSizeUnit,
-            nutrients: [
-              {
-                nutrientId: "energy",
-                amount: mealData.adjustedNutrition.energy,
-              },
-              {
-                nutrientId: "carbohydrate",
-                amount: mealData.adjustedNutrition.carbohydrates,
-              },
-              {
-                nutrientId: "protein",
-                amount: mealData.adjustedNutrition.proteins,
-              },
-              {
-                nutrientId: "fat",
-                amount: mealData.adjustedNutrition.fats,
-              },
-            ],
+            unit: mealData.nutritionData.foodData.servingSizeUnit,
           },
         ],
       });
@@ -222,9 +206,9 @@ export function ImageNutritionScreen({
           <CreateMealForm
             onSubmit={handleMealFormSubmit}
             onCancel={handleMealFormCancel}
-            foodName={mealData.nutritionData.name}
+            foodName={mealData.nutritionData.foodData.name}
             portionSize={mealData.portionSize}
-            portionUnit={mealData.nutritionData.estimatedPortionSizeUnit}
+            portionUnit={mealData.nutritionData.foodData.servingSizeUnit}
             adjustedNutrition={mealData.adjustedNutrition}
             isSubmitting={createMealMutation.isPending}
           />

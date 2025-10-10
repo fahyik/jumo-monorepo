@@ -20,32 +20,18 @@ export const createMealItemSchema = z.object({
   providerFoodId: z.string(),
   quantity: z.number().positive(),
   unit: z.string(),
-  nutrients: z.array(
-    z.object({
-      nutrientId: z.string(),
-      amount: z.number(),
-    })
-  ),
 });
 
 export const updateMealItemSchema = z.object({
   quantity: z.number().positive().optional(),
   unit: z.string().optional(),
-  nutrients: z
-    .array(
-      z.object({
-        nutrientId: z.string(),
-        amount: z.number(),
-      })
-    )
-    .optional(),
 });
 
 export const createMealSchema = z.object({
   name: z.string().optional(),
   notes: z.string().optional(),
   consumedAt: z.iso.datetime(),
-  items: z.array(createMealItemSchema).optional(),
+  items: z.array(createMealItemSchema).nonempty(),
 });
 
 // API endpoint types

@@ -1,8 +1,9 @@
 import { NextFunction, Response } from "express";
-import { createMealItemSchema } from "@jumo-monorepo/interfaces";
 
 import { AuthenticatedRequest } from "../../../../middleware/interfaces.js";
 import { createMealItem as createMealItemService } from "../../../../services/meal-items/create-meal-item.js";
+
+import { createMealItemSchema } from "@jumo-monorepo/interfaces";
 
 export async function postItem(
   req: AuthenticatedRequest,
@@ -34,7 +35,6 @@ export async function postItem(
       providerFoodId: validation.data.providerFoodId,
       quantity: validation.data.quantity,
       unit: validation.data.unit,
-      nutrients: validation.data.nutrients,
     });
 
     res.status(201).json({ success: true, data: mealItem });

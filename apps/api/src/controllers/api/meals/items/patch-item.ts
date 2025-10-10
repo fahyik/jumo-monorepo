@@ -1,8 +1,9 @@
 import { NextFunction, Response } from "express";
-import { updateMealItemSchema } from "@jumo-monorepo/interfaces";
 
 import { AuthenticatedRequest } from "../../../../middleware/interfaces.js";
 import { updateMealItem as updateMealItemService } from "../../../../services/meal-items/update-meal-item.js";
+
+import { updateMealItemSchema } from "@jumo-monorepo/interfaces";
 
 export async function patchItem(
   req: AuthenticatedRequest,
@@ -33,7 +34,6 @@ export async function patchItem(
       userId,
       quantity: validation.data.quantity,
       unit: validation.data.unit,
-      nutrients: validation.data.nutrients,
     });
 
     if (!mealItem) {

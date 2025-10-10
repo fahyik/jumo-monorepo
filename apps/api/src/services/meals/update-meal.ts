@@ -1,16 +1,19 @@
 import { sql } from "../../db/index.js";
-import type { Meal, MealItem } from "@jumo-monorepo/interfaces";
 import { getMealById } from "./get-meal-by-id.js";
+
+import type { Meal, MealItem } from "@jumo-monorepo/interfaces";
 
 export interface UpdateMealInput {
   mealId: string;
   userId: string;
   name?: string;
   notes?: string;
-  consumedAt?: Date;
+  consumedAt?: string;
 }
 
-export async function updateMeal(input: UpdateMealInput): Promise<(Meal & { items: MealItem[] }) | null> {
+export async function updateMeal(
+  input: UpdateMealInput
+): Promise<(Meal & { items: MealItem[] }) | null> {
   const updates = [];
 
   if (input.name !== undefined) {
