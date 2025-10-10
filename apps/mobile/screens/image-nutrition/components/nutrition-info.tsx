@@ -4,6 +4,8 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import { NutrientDisplay } from "./nutrient-display";
 import { NutrientRow } from "./nutrient-row";
 
+import { ProviderFood } from "@jumo-monorepo/interfaces";
+
 import { Button } from "@/components/ui/button";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -15,40 +17,11 @@ export interface AdjustedNutrition {
   fats: number;
 }
 
-interface NutritionData {
-  name: string;
-  description: string;
-  nutritionPer100g: {
-    carbohydrates: number;
-    carbohydratesUnit: string;
-    proteins: number;
-    proteinsUnit: string;
-    fats: number;
-    fatsUnit: string;
-    energy: number;
-    energyUnit: string;
-  };
-  estimatedPortionSize: number;
-  estimatedPortionSizeUnit: string;
-  totalNutritionForEstimatedPortion: {
-    carbohydrates: number;
-    carbohydratesUnit: string;
-    proteins: number;
-    proteinsUnit: string;
-    fats: number;
-    fatsUnit: string;
-    energy: number;
-    energyUnit: string;
-  };
-  providerFoodId: string;
-  notes: string;
-}
-
 interface NutritionInfoProps {
-  data: NutritionData;
+  data: ProviderFood;
   imageUri: string;
   onCreateMeal?: (
-    nutritionData: NutritionData,
+    nutritionData: ProviderFood,
     portionSize: number,
     adjustedNutrition: AdjustedNutrition
   ) => void;
@@ -70,20 +43,23 @@ export function NutritionInfo({
   const [multiplier, setMultiplier] = useState(1);
 
   // Calculate adjusted nutrition based on user's portion size
-  const userPortionSize = data.estimatedPortionSize * multiplier;
+  const userPortionSize = data.foodData.servingSize * multiplier;
   const ratio = multiplier;
 
+  const energyPer100g =
+    data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
+  const proteinsPer100g =
+    data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
+  const fatsPer100g =
+    data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
+  const carbsPer100g =
+    data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
+
   const adjustedNutrition = {
-    energy: Math.round(data.totalNutritionForEstimatedPortion.energy * ratio),
-    carbohydrates:
-      Math.round(
-        data.totalNutritionForEstimatedPortion.carbohydrates * ratio * 10
-      ) / 10,
-    proteins:
-      Math.round(data.totalNutritionForEstimatedPortion.proteins * ratio * 10) /
-      10,
-    fats:
-      Math.round(data.totalNutritionForEstimatedPortion.fats * ratio * 10) / 10,
+    energy: Math.round(energyPer100g * ratio),
+    carbohydrates: Math.round(carbsPer100g * ratio * 10) / 10,
+    proteins: Math.round(proteinsPer100g * ratio * 10) / 10,
+    fats: Math.round(fatsPer100g * ratio * 10) / 10,
   };
 
   const handleCreateNewMeal = () => {
@@ -101,24 +77,24 @@ export function NutritionInfo({
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.title}>{data.name}</Text>
+          <Text style={styles.title}>{data.foodData.name}</Text>
         </View>
         <Image source={{ uri: imageUri }} style={styles.headerImage} />
       </View>
-      <Text style={styles.description}>{data.description}</Text>
+      <Text style={styles.description}>{data.foodData.description}</Text>
 
       <NutrientDisplay
         title="Nutrition per 100g"
         description={
           <View style={styles.notesSection}>
-            <Text style={styles.notesText}>{data.notes}</Text>
+            <Text style={styles.notesText}>{data.foodData.notes}</Text>
           </View>
         }
         nutrition={{
-          energy: data.nutritionPer100g.energy,
-          carbohydrates: data.nutritionPer100g.carbohydrates,
-          proteins: data.nutritionPer100g.proteins,
-          fats: data.nutritionPer100g.fats,
+          energy: energyPer100g,
+          carbohydrates: carbsPer100g,
+          proteins: proteinsPer100g,
+          fats: fatsPer100g,
         }}
       />
 
@@ -155,8 +131,8 @@ export function NutritionInfo({
                     styles.portionButtonSubtextSelected,
                 ]}
               >
-                {data.estimatedPortionSize * option.value}
-                {data.estimatedPortionSizeUnit}
+                {data.foodData.servingSize * option.value}
+                {data.foodData.servingSizeUnit}
               </Text>
             </TouchableOpacity>
           ))}

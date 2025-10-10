@@ -1,39 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import { ProviderFood } from "@jumo-monorepo/interfaces/src/domain/meals";
 
-interface NutritionData {
-  name: string;
-  description: string;
-  nutritionPer100g: {
-    carbohydrates: number;
-    carbohydratesUnit: string;
-    proteins: number;
-    proteinsUnit: string;
-    fats: number;
-    fatsUnit: string;
-    energy: number;
-    energyUnit: string;
-  };
-  estimatedPortionSize: number;
-  estimatedPortionSizeUnit: string;
-  totalNutritionForEstimatedPortion: {
-    carbohydrates: number;
-    carbohydratesUnit: string;
-    proteins: number;
-    proteinsUnit: string;
-    fats: number;
-    fatsUnit: string;
-    energy: number;
-    energyUnit: string;
-  };
-  notes: string;
-  providerFoodId: string;
-}
+import { supabase } from "@/lib/supabase";
 
 interface UploadResponse {
   success: boolean;
-  data: NutritionData;
+  data: ProviderFood;
   reason?: string;
 }
 
@@ -42,9 +15,7 @@ export function useImageUpload(
   mimeType?: string
 ) {
   const [isLoading, setIsLoading] = useState(true);
-  const [nutritionData, setNutritionData] = useState<NutritionData | null>(
-    null
-  );
+  const [nutritionData, setNutritionData] = useState<ProviderFood | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const uploadImage = async () => {

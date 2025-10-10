@@ -18,7 +18,8 @@ interface ProviderFoodNutrientPer100g {
 export interface ProviderFoodData {
   name: string;
   description: string;
-  servingSize: string;
+  notes?: string;
+  servingSize: number;
   servingSizeUnit: string;
   nutrients: ProviderFoodNutrientPer100g[];
   image:
@@ -34,8 +35,8 @@ export interface ProviderFood {
   id: string;
   provider: string;
   providerId: string;
-  rawData: Record<string, unknown>;
-  data: Record<string, unknown>;
+  rawData: Record<string, unknown> | null;
+  foodData: ProviderFoodData;
   createdAt: Date;
   updatedAt: Date;
 }

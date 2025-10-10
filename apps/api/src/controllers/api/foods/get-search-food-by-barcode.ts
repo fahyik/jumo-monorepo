@@ -12,7 +12,7 @@ export async function getSearchFoodByBarcode(
 
     const result = await getFoodByBarcode({ barcode });
 
-    res.status(200).json(result);
+    res.status(200).json({ success: true, data: result });
     return;
   } catch (error) {
     next(error);

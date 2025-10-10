@@ -1,5 +1,7 @@
 import { sql } from "../../db/index.js";
+import { convertUnit } from "../../utils/unit-converter.js";
 import { openFoodFactsClient } from "./client.js";
+import { OFF_NUTRIENT_MAPPING } from "./mapping.js";
 
 import type {
   Nutrient,
@@ -7,25 +9,7 @@ import type {
   ProviderFoodData,
 } from "@jumo-monorepo/interfaces";
 
-// Cache TTL in days - repull data if older than this
 const PROVIDER_FOOD_CACHE_TTL_DAYS = 30;
-
-// Map OpenFoodFacts nutrient fields to our nutrient IDs
-const OFF_NUTRIENT_MAPPING: Record<string, { value: string; unit: string }> = {
-  energy: { value: "energy-kcal_value", unit: "energy-kcal_unit" },
-  carbohydrate: { value: "carbohydrates_value", unit: "carbohydrates_unit" },
-  protein: { value: "proteins_value", unit: "proteins_unit" },
-  fat: { value: "fat_value", unit: "fat_unit" },
-  salt: { value: "salt_value", unit: "salt_unit" },
-  sugar: { value: "sugars_value", unit: "sugars_unit" },
-  fiber: { value: "fiber_value", unit: "fiber_unit" },
-  saturated_fat: {
-    value: "saturated-fat_value",
-    unit: "saturated-fat_unit",
-  },
-  sodium: { value: "sodium_value", unit: "sodium_unit" },
-  alcohol: { value: "alcohol_value", unit: "alcohol_unit" },
-};
 
 interface OpenFoodFactsNutriments {
   [key: string]: number | string | undefined;
@@ -59,7 +43,7 @@ export async function getFoodByBarcode({
       id,
       provider,
       provider_id as "providerId",
-      data,
+      data as "foodData",
       created_at as "createdAt",
       updated_at as "updatedAt"
     FROM jumo.provider_foods
@@ -99,29 +83,6 @@ export async function getFoodByBarcode({
   const product = result.data.product;
   const nutriments = product.nutriments || {};
 
-  // Helper function to convert units
-  const convertUnit = (
-    amount: number,
-    fromUnit: string,
-    toUnit: string
-  ): number => {
-    if (fromUnit === toUnit) return amount;
-
-    // g to mg
-    if (fromUnit === "g" && toUnit === "mg") {
-      return amount * 1000;
-    }
-
-    // mg to g
-    if (fromUnit === "mg" && toUnit === "g") {
-      return amount / 1000;
-    }
-
-    // No conversion available, return original amount
-    return amount;
-  };
-
-  // Extract nutrients using database nutrients and OFF mapping
   const nutrients: ProviderFoodData["nutrients"] = [];
   for (const dbNutrient of dbNutrients) {
     const offMapping = OFF_NUTRIENT_MAPPING[dbNutrient.id];
@@ -136,7 +97,6 @@ export async function getFoodByBarcode({
       if (typeof value === "number") {
         amount = value;
 
-        // Convert unit if provider unit exists and differs from db unit
         if (typeof providerUnit === "string") {
           amount = convertUnit(amount, providerUnit, dbNutrient.unit);
         }
@@ -153,11 +113,10 @@ export async function getFoodByBarcode({
     });
   }
 
-  // Transform to ProviderFoodData
   const data: ProviderFoodData = {
     name: product.product_name || "Unknown product name",
     description: product.generic_name || "",
-    servingSize: product.serving_quantity || "0",
+    servingSize: parseFloat(product.serving_quantity ?? "0") || 0,
     servingSizeUnit: product.serving_quantity_unit || "g",
     nutrients,
     image: product.image_url
@@ -177,7 +136,7 @@ export async function getFoodByBarcode({
       id,
       provider,
       provider_id as "providerId",
-      data,
+      data as "foodData",
       created_at as "createdAt",
       updated_at as "updatedAt"
   `;

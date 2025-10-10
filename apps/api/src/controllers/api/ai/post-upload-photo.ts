@@ -9,7 +9,15 @@ import z from "zod";
 import { sql } from "../../../db/index.js";
 import { logger } from "../../../logger.js";
 import { AuthenticatedRequest } from "../../../middleware/interfaces.js";
+import { AI_NUTRIENT_MAPPING } from "../../../services/ai/mapping.js";
 import { supabase } from "../../../supabase.js";
+import { convertUnit } from "../../../utils/unit-converter.js";
+
+import type {
+  Nutrient,
+  ProviderFood,
+  ProviderFoodData,
+} from "@jumo-monorepo/interfaces";
 
 export async function postUploadPhoto(
   req: AuthenticatedRequest,
@@ -69,19 +77,21 @@ export async function postUploadPhoto(
               fatsUnit: z.literal("g"),
               energy: z.number(),
               energyUnit: z.literal("kcal"),
+              alcohol: z.number(),
+              alcoholUnit: z.literal("g"),
+              salt: z.number(),
+              saltUnit: z.literal("g"),
+              sugar: z.number(),
+              sugarUnit: z.literal("g"),
+              fiber: z.number(),
+              fiberUnit: z.literal("g"),
+              saturatedFat: z.number(),
+              saturatedFatUnit: z.literal("g"),
+              sodium: z.number(),
+              sodiumUnit: z.literal("mg"),
             }),
             estimatedPortionSize: z.number(),
             estimatedPortionSizeUnit: z.literal("g"),
-            totalNutritionForEstimatedPortion: z.object({
-              carbohydrates: z.number(),
-              carbohydratesUnit: z.literal("g"),
-              proteins: z.number(),
-              proteinsUnit: z.literal("g"),
-              fats: z.number(),
-              fatsUnit: z.literal("g"),
-              energy: z.number(),
-              energyUnit: z.literal("kcal"),
-            }),
             notes: z.string().optional(),
           })
           .optional(),
@@ -89,15 +99,17 @@ export async function postUploadPhoto(
       }),
     });
 
-    if (result.object.success && req.auth) {
+    if (result.object.success && result.object.data && req.auth) {
       const userId = req.auth.sub;
       const timestamp = Date.now();
 
       const fileExtension = req.file.mimetype.split("/")[1];
       const filePath = `${userId}/${timestamp}.${fileExtension}`;
 
+      const BUCKET = "image-uploads";
+
       const uploadResult = await supabase.storage
-        .from("image-uploads")
+        .from(BUCKET)
         .upload(filePath, req.file.buffer, {
           contentType: req.file.mimetype,
           upsert: false,
@@ -110,19 +122,80 @@ export async function postUploadPhoto(
           .json({ success: false, reason: "Failed to upload image" });
       }
 
-      const providerId = uuidv4();
-      const rawData = {
-        ...result.object,
-        file_path: filePath,
+      // Fetch nutrients from database
+      const dbNutrients = await sql<Nutrient[]>`
+        SELECT id, name, unit, translation_key as "translationKey", parent_id as "parentId", created_at as "createdAt", updated_at as "updatedAt"
+        FROM jumo.nutrients
+      `;
+
+      const aiData = result.object.data;
+      const nutritionPer100g = aiData.nutritionPer100g;
+
+      // Map AI nutrients to database nutrients
+      const nutrients: ProviderFoodData["nutrients"] = [];
+
+      for (const dbNutrient of dbNutrients) {
+        let amount = 0;
+        let providerNutrientId: string | null = null;
+
+        const aiMapping = AI_NUTRIENT_MAPPING[dbNutrient.id];
+
+        if (aiMapping) {
+          const value =
+            nutritionPer100g[aiMapping.value as keyof typeof nutritionPer100g];
+          const providerUnit =
+            nutritionPer100g[aiMapping.unit as keyof typeof nutritionPer100g];
+
+          if (typeof value === "number") {
+            amount = value;
+
+            if (typeof providerUnit === "string") {
+              amount = convertUnit(amount, providerUnit, dbNutrient.unit);
+            }
+          }
+
+          providerNutrientId = aiMapping.value;
+        }
+
+        nutrients.push({
+          id: dbNutrient.id,
+          providerNutrientId,
+          unit: dbNutrient.unit,
+          amount,
+        });
+      }
+
+      const providerFoodData: ProviderFoodData = {
+        name: aiData.name,
+        description: aiData.description,
+        notes: aiData.notes,
+        servingSize: aiData.estimatedPortionSize,
+        servingSizeUnit: aiData.estimatedPortionSizeUnit,
+        nutrients,
+        image: {
+          type: "storage",
+          bucket: BUCKET,
+          path: filePath,
+        },
       };
 
-      await sql`
-        INSERT INTO jumo.provider_foods (provider, provider_id, raw_data, data)
-        VALUES (${userId}, ${providerId}, ${sql.json(rawData)}, ${sql.json({})})
-      `;
-    }
+      const providerId = uuidv4();
 
-    res.json(result.object);
+      const [providerFood] = await sql<ProviderFood[]>`
+        INSERT INTO jumo.provider_foods (provider, provider_id, raw_data, data)
+        VALUES (${userId}, ${providerId}, ${sql.json(JSON.parse(JSON.stringify(result.object)))}, ${sql.json(JSON.parse(JSON.stringify(providerFoodData)))})
+        RETURNING
+          id,
+          provider,
+          provider_id as "providerId",
+          data as "foodData",
+          created_at as "createdAt",
+          updated_at as "updatedAt"
+      `;
+
+      res.json({ success: true, data: providerFood });
+      return;
+    }
   } catch (error) {
     next(error);
   }
