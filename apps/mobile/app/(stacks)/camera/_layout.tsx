@@ -15,10 +15,11 @@ export default function StacksLayout() {
         }}
       />
       <Stack.Screen
-        name="modal-image"
+        name="photo"
         options={{
-          presentation: "modal",
+          // presentation: "modal",
           headerShown: false,
+          animation: "slide_from_bottom",
         }}
       />
     </Stack>

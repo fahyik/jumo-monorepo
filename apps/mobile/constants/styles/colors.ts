@@ -13,6 +13,8 @@ export type Colors = {
   icon: string;
   tabIconDefault: string;
   tabIconSelected: string;
+
+  danger: string;
 };
 
 const tintColorLight = "#2b2d2eff";
@@ -33,6 +35,7 @@ export const COLORS: {
     icon: "#687076",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
+    danger: "#f94848ff",
   },
   dark: {
     text: "#ECEDEE",
@@ -45,5 +48,6 @@ export const COLORS: {
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
+    danger: "#f94848ff",
   },
 };

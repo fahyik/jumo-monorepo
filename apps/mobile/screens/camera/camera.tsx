@@ -5,13 +5,7 @@ import {
 } from "expo-camera";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Button,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Button, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ImagePicker } from "./components/image-picker";
@@ -46,7 +40,7 @@ export function CameraScreen() {
       if (photo?.uri) {
         setIsCameraActive(false);
         router.navigate({
-          pathname: "/(stacks)/camera/modal-image",
+          pathname: "/(stacks)/camera/photo",
           params: {
             imageUri: photo.uri,
             mimeType: `image/${photo.format}`,
@@ -178,7 +172,7 @@ export function CameraScreen() {
             onImageSelect={(asset) => {
               setIsCameraActive(false);
               router.navigate({
-                pathname: "/(stacks)/camera/modal-image",
+                pathname: "/(stacks)/camera/photo",
                 params: {
                   imageUri: asset.uri,
                   mimeType: asset.mimeType,
@@ -189,7 +183,9 @@ export function CameraScreen() {
         </View>
         <Pressable style={styles.shutterBtn} onPress={takePicture}>
           {({ pressed }) => (
-            <View style={[styles.shutterBtnOuter, { opacity: pressed ? 0.5 : 1 }]}>
+            <View
+              style={[styles.shutterBtnOuter, { opacity: pressed ? 0.5 : 1 }]}
+            >
               <View style={styles.shutterBtnInner} />
             </View>
           )}

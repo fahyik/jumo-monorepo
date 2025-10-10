@@ -1,9 +1,31 @@
-import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BlurView } from "expo-blur";
+import { useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
-import { NutritionInfo } from "./components/nutrition-info";
+import { CreateMealForm } from "./components/create-meal-form";
+import { AdjustedNutrition, NutritionInfo } from "./components/nutrition-info";
 import { useImageUpload } from "./hooks/use-image-upload";
 
+import { ModalClose } from "@/components/navigation/modal-close";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -17,10 +39,68 @@ export function ImageNutritionScreen({
   mimeType,
 }: ImageNutritionScreenProps) {
   const styles = useThemedStyles(themedStyles);
+  const colorScheme = useColorScheme();
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [mealData, setMealData] = useState<{
+    nutritionData: any;
+    portionSize: number;
+    adjustedNutrition: AdjustedNutrition;
+  } | null>(null);
+
+  const insets = useSafeAreaInsets();
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const blurStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollY.value,
+      [0, 50],
+      [0, 1],
+      Extrapolate.CLAMP
+    );
+    return { opacity };
+  });
+
   const { nutritionData, isLoading, error } = useImageUpload(
     imageUri,
     mimeType
   );
+
+  const handleCreateMeal = (
+    nutritionData: any,
+    portionSize: number,
+    adjustedNutrition: AdjustedNutrition
+  ) => {
+    setMealData({ nutritionData, portionSize, adjustedNutrition });
+    bottomSheetRef.current?.present();
+  };
+
+  const handleMealFormSubmit = (
+    mealName: string,
+    notes: string,
+    consumedAt: Date
+  ) => {
+    if (mealData) {
+      console.log("Meal created:", {
+        mealName,
+        notes,
+        consumedAt,
+        ...mealData,
+      });
+      setMealData(null);
+    }
+    bottomSheetRef.current?.close();
+  };
+
+  const handleMealFormCancel = () => {
+    setMealData(null);
+    bottomSheetRef.current?.close();
+  };
 
   if (!imageUri) {
     return (
@@ -31,16 +111,38 @@ export function ImageNutritionScreen({
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
+      <Animated.View
+        style={[styles.blurContainer, { height: insets.top }, blurStyle]}
+        pointerEvents="none"
+      >
+        <BlurView
+          intensity={40}
+          tint={colorScheme === "dark" ? "dark" : "light"}
+          style={styles.blurView}
+        />
+      </Animated.View>
+
+      <View style={[styles.modalCloseContainer, { top: insets.top }]}>
+        <ModalClose />
+      </View>
+
       {(isLoading || error) && (
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: imageUri }} style={styles.image} />
+        <View style={styles.imageWrapper}>
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: imageUri }} style={styles.image} />
+          </View>
         </View>
       )}
 
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
+        contentContainerStyle={[
+          styles.scrollViewContent,
+          { paddingTop: insets.top },
+        ]}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
         {isLoading && (
           <View style={styles.loadingContainer}>
@@ -56,9 +158,26 @@ export function ImageNutritionScreen({
         )}
 
         {nutritionData && (
-          <NutritionInfo data={nutritionData} imageUri={imageUri} />
+          <NutritionInfo
+            data={nutritionData}
+            imageUri={imageUri}
+            onCreateMeal={handleCreateMeal}
+          />
         )}
-      </ScrollView>
+      </Animated.ScrollView>
+
+      <BottomSheet ref={bottomSheetRef}>
+        {mealData && (
+          <CreateMealForm
+            onSubmit={handleMealFormSubmit}
+            onCancel={handleMealFormCancel}
+            foodName={mealData.nutritionData.name}
+            portionSize={mealData.portionSize}
+            portionUnit={mealData.nutritionData.estimatedPortionSizeUnit}
+            adjustedNutrition={mealData.adjustedNutrition}
+          />
+        )}
+      </BottomSheet>
     </SafeAreaView>
   );
 }
@@ -72,13 +191,31 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   container: {
     flex: 1,
     backgroundColor: "transparent",
-    paddingHorizontal: 16,
-    paddingTop: 24,
     gap: 16,
+  },
+  blurContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    overflow: "hidden",
+  },
+  blurView: {
+    flex: 1,
+  },
+  modalCloseContainer: {
+    position: "absolute",
+    left: 0,
+    right: 16,
+    zIndex: 1,
+  },
+  imageWrapper: {
+    paddingHorizontal: 16,
   },
   imageContainer: {
     width: "100%",
-    height: "40%",
+    height: 300,
     borderRadius: 16,
     overflow: "hidden",
   },
@@ -88,9 +225,12 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   },
   scrollView: {
     flex: 1,
+    paddingTop: 50,
   },
   scrollViewContent: {
     gap: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 64,
   },
   loadingContainer: {
     alignItems: "center",

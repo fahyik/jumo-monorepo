@@ -1,8 +1,16 @@
 import { useState } from "react";
 import { Image, Text, TextInput, View } from "react-native";
 
+import { Button } from "@/components/ui/button";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
+
+export interface AdjustedNutrition {
+  energy: number;
+  carbohydrates: number;
+  proteins: number;
+  fats: number;
+}
 
 interface NutritionData {
   name: string;
@@ -29,15 +37,25 @@ interface NutritionData {
     energy: number;
     energyUnit: string;
   };
+  providerFoodId: string;
   notes: string;
 }
 
 interface NutritionInfoProps {
   data: NutritionData;
   imageUri: string;
+  onCreateMeal?: (
+    nutritionData: NutritionData,
+    portionSize: number,
+    adjustedNutrition: AdjustedNutrition
+  ) => void;
 }
 
-export function NutritionInfo({ data, imageUri }: NutritionInfoProps) {
+export function NutritionInfo({
+  data,
+  imageUri,
+  onCreateMeal,
+}: NutritionInfoProps) {
   const styles = useThemedStyles(themedStyles);
   const [portionSize, setPortionSize] = useState(
     data.estimatedPortionSize.toString()
@@ -49,15 +67,26 @@ export function NutritionInfo({ data, imageUri }: NutritionInfoProps) {
 
   const adjustedNutrition = {
     energy: Math.round(data.totalNutritionForEstimatedPortion.energy * ratio),
-    carbohydrates: Math.round(
-      data.totalNutritionForEstimatedPortion.carbohydrates * ratio * 10
-    ) / 10,
-    proteins: Math.round(
-      data.totalNutritionForEstimatedPortion.proteins * ratio * 10
-    ) / 10,
-    fats: Math.round(
-      data.totalNutritionForEstimatedPortion.fats * ratio * 10
-    ) / 10,
+    carbohydrates:
+      Math.round(
+        data.totalNutritionForEstimatedPortion.carbohydrates * ratio * 10
+      ) / 10,
+    proteins:
+      Math.round(data.totalNutritionForEstimatedPortion.proteins * ratio * 10) /
+      10,
+    fats:
+      Math.round(data.totalNutritionForEstimatedPortion.fats * ratio * 10) / 10,
+  };
+
+  const handleCreateNewMeal = () => {
+    onCreateMeal?.(data, userPortionSize, adjustedNutrition);
+  };
+
+  const handleAddToExistingMeal = () => {
+    console.log("Add to existing meal", {
+      portionSize: userPortionSize,
+      nutrition: adjustedNutrition,
+    });
   };
 
   return (
@@ -71,9 +100,11 @@ export function NutritionInfo({ data, imageUri }: NutritionInfoProps) {
       <Text style={styles.description}>{data.description}</Text>
 
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, styles.sectionTitleWithMargin]}>
-          Nutrition per 100g
-        </Text>
+        <Text style={[styles.sectionTitle]}>Nutrition per 100g</Text>
+        <View style={styles.notesSection}>
+          <Text style={styles.notesText}>{data.notes}</Text>
+        </View>
+
         <View style={styles.nutrientList}>
           <View style={styles.nutrientRow}>
             <Text style={styles.nutrientLabel}>Energy:</Text>
@@ -115,7 +146,9 @@ export function NutritionInfo({ data, imageUri }: NutritionInfoProps) {
               keyboardType="decimal-pad"
               selectTextOnFocus
             />
-            <Text style={styles.portionUnit}>{data.estimatedPortionSizeUnit}</Text>
+            <Text style={styles.portionUnit}>
+              {data.estimatedPortionSizeUnit}
+            </Text>
           </View>
         </View>
         <View style={styles.nutrientList}>
@@ -150,9 +183,14 @@ export function NutritionInfo({ data, imageUri }: NutritionInfoProps) {
         </View>
       </View>
 
-      <View style={styles.notesSection}>
-        <Text style={styles.notesTitle}>Notes</Text>
-        <Text style={styles.notesText}>{data.notes}</Text>
+      <View style={styles.buttonContainer}>
+        <Button variant="primary" onPress={handleCreateNewMeal}>
+          Create a new meal
+        </Button>
+
+        <Button variant="secondary" onPress={handleAddToExistingMeal}>
+          Add to an existing meal
+        </Button>
       </View>
     </View>
   );
@@ -191,7 +229,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     borderRadius: 8,
   },
   portionSection: {
-    backgroundColor: "#e8f5e8",
+    backgroundColor: colors.backgroundMuted,
     padding: 16,
     borderRadius: 8,
   },
@@ -222,18 +260,11 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     fontWeight: "600",
     color: colors.text,
   },
-  notesSection: {
-    backgroundColor: "#fff3e0",
-    padding: 16,
-    borderRadius: 8,
-  },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: colors.text,
-  },
-  sectionTitleWithMargin: {
-    marginBottom: 12,
   },
   nutrientList: {
     gap: 8,
@@ -255,9 +286,13 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     marginBottom: 8,
     color: colors.text,
   },
+  notesSection: { paddingVertical: 8 },
   notesText: {
-    fontSize: 14,
-    color: colors.textMuted,
-    lineHeight: 20,
+    fontSize: 12,
+    lineHeight: 12,
+    color: colors.danger,
+  },
+  buttonContainer: {
+    gap: 12,
   },
 }));

@@ -28,6 +28,7 @@ interface NutritionData {
     energyUnit: string;
   };
   notes: string;
+  providerFoodId: string;
 }
 
 interface UploadResponse {
@@ -36,9 +37,14 @@ interface UploadResponse {
   reason?: string;
 }
 
-export function useImageUpload(imageUri: string | undefined, mimeType?: string) {
+export function useImageUpload(
+  imageUri: string | undefined,
+  mimeType?: string
+) {
   const [isLoading, setIsLoading] = useState(true);
-  const [nutritionData, setNutritionData] = useState<NutritionData | null>(null);
+  const [nutritionData, setNutritionData] = useState<NutritionData | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
   const uploadImage = async () => {
@@ -55,7 +61,8 @@ export function useImageUpload(imageUri: string | undefined, mimeType?: string) 
         name: "image",
       } as any);
 
-      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      const token = (await supabase.auth.getSession()).data.session
+        ?.access_token;
 
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/ai/upload-photo`,

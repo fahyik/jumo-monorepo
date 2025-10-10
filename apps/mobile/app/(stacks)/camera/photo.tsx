@@ -2,7 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 
 import { ImageNutritionScreen } from "@/screens/image-nutrition/image-nutrition";
 
-export default function ModalImage() {
+export default function Photo() {
   const { imageUri, mimeType } = useLocalSearchParams<{
     imageUri: string;
     mimeType?: string;
