@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Image, Text, TextInput, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+
+import { NutrientDisplay } from "./nutrient-display";
+import { NutrientRow } from "./nutrient-row";
 
 import { Button } from "@/components/ui/button";
 import { createThemedStyles } from "@/lib/utils";
@@ -51,19 +54,24 @@ interface NutritionInfoProps {
   ) => void;
 }
 
+const PORTION_MULTIPLIERS = [
+  { label: "0.5x", value: 0.5 },
+  { label: "Estimated", value: 1 },
+  { label: "1.5x", value: 1.5 },
+  { label: "2x", value: 2 },
+];
+
 export function NutritionInfo({
   data,
   imageUri,
   onCreateMeal,
 }: NutritionInfoProps) {
   const styles = useThemedStyles(themedStyles);
-  const [portionSize, setPortionSize] = useState(
-    data.estimatedPortionSize.toString()
-  );
+  const [multiplier, setMultiplier] = useState(1);
 
   // Calculate adjusted nutrition based on user's portion size
-  const userPortionSize = parseFloat(portionSize) || data.estimatedPortionSize;
-  const ratio = userPortionSize / data.estimatedPortionSize;
+  const userPortionSize = data.estimatedPortionSize * multiplier;
+  const ratio = multiplier;
 
   const adjustedNutrition = {
     energy: Math.round(data.totalNutritionForEstimatedPortion.energy * ratio),
@@ -99,88 +107,62 @@ export function NutritionInfo({
       </View>
       <Text style={styles.description}>{data.description}</Text>
 
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle]}>Nutrition per 100g</Text>
-        <View style={styles.notesSection}>
-          <Text style={styles.notesText}>{data.notes}</Text>
-        </View>
-
-        <View style={styles.nutrientList}>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Energy:</Text>
-            <Text style={styles.nutrientValue}>
-              {data.nutritionPer100g.energy} {data.nutritionPer100g.energyUnit}
-            </Text>
+      <NutrientDisplay
+        title="Nutrition per 100g"
+        description={
+          <View style={styles.notesSection}>
+            <Text style={styles.notesText}>{data.notes}</Text>
           </View>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Carbohydrates:</Text>
-            <Text style={styles.nutrientValue}>
-              {data.nutritionPer100g.carbohydrates}{" "}
-              {data.nutritionPer100g.carbohydratesUnit}
-            </Text>
-          </View>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Proteins:</Text>
-            <Text style={styles.nutrientValue}>
-              {data.nutritionPer100g.proteins}{" "}
-              {data.nutritionPer100g.proteinsUnit}
-            </Text>
-          </View>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Fats:</Text>
-            <Text style={styles.nutrientValue}>
-              {data.nutritionPer100g.fats} {data.nutritionPer100g.fatsUnit}
-            </Text>
-          </View>
-        </View>
-      </View>
+        }
+        nutrition={{
+          energy: data.nutritionPer100g.energy,
+          carbohydrates: data.nutritionPer100g.carbohydrates,
+          proteins: data.nutritionPer100g.proteins,
+          fats: data.nutritionPer100g.fats,
+        }}
+      />
 
       <View style={styles.portionSection}>
-        <View style={styles.portionHeaderRow}>
-          <Text style={styles.sectionTitle}>Your Portion</Text>
-          <View style={styles.portionInputContainer}>
-            <TextInput
-              style={styles.portionInput}
-              value={portionSize}
-              onChangeText={setPortionSize}
-              keyboardType="decimal-pad"
-              selectTextOnFocus
-            />
-            <Text style={styles.portionUnit}>
-              {data.estimatedPortionSizeUnit}
-            </Text>
-          </View>
+        <Text style={styles.sectionTitle}>Your Portion</Text>
+        <Text style={styles.notesText}>
+          Adjust your portion size if you think the estimate is inaccurate.
+        </Text>
+
+        <View style={styles.portionButtons}>
+          {PORTION_MULTIPLIERS.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.portionButton,
+                multiplier === option.value && styles.portionButtonSelected,
+              ]}
+              onPress={() => setMultiplier(option.value)}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.portionButtonText,
+                  multiplier === option.value &&
+                    styles.portionButtonTextSelected,
+                ]}
+              >
+                {option.label}
+              </Text>
+              <Text
+                style={[
+                  styles.portionButtonSubtext,
+                  multiplier === option.value &&
+                    styles.portionButtonSubtextSelected,
+                ]}
+              >
+                {data.estimatedPortionSize * option.value}
+                {data.estimatedPortionSizeUnit}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
-        <View style={styles.nutrientList}>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Energy:</Text>
-            <Text style={styles.nutrientValue}>
-              {adjustedNutrition.energy}{" "}
-              {data.totalNutritionForEstimatedPortion.energyUnit}
-            </Text>
-          </View>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Carbohydrates:</Text>
-            <Text style={styles.nutrientValue}>
-              {adjustedNutrition.carbohydrates}{" "}
-              {data.totalNutritionForEstimatedPortion.carbohydratesUnit}
-            </Text>
-          </View>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Proteins:</Text>
-            <Text style={styles.nutrientValue}>
-              {adjustedNutrition.proteins}{" "}
-              {data.totalNutritionForEstimatedPortion.proteinsUnit}
-            </Text>
-          </View>
-          <View style={styles.nutrientRow}>
-            <Text style={styles.nutrientLabel}>Fats:</Text>
-            <Text style={styles.nutrientValue}>
-              {adjustedNutrition.fats}{" "}
-              {data.totalNutritionForEstimatedPortion.fatsUnit}
-            </Text>
-          </View>
-        </View>
+
+        <NutrientRow nutrition={adjustedNutrition} />
       </View>
 
       <View style={styles.buttonContainer}>
@@ -223,42 +205,44 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     color: colors.textMuted,
     lineHeight: 22,
   },
-  section: {
-    backgroundColor: colors.backgroundMuted,
-    padding: 16,
-    borderRadius: 8,
-  },
   portionSection: {
     backgroundColor: colors.backgroundMuted,
     padding: 16,
     borderRadius: 8,
+    gap: 12,
   },
-  portionHeaderRow: {
+  portionButtons: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  portionInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     gap: 8,
   },
-  portionInput: {
-    backgroundColor: "white",
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    fontSize: 16,
+  portionButton: {
+    flex: 1,
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    alignItems: "center",
+    gap: 4,
+  },
+  portionButtonSelected: {
+    backgroundColor: colors.tint,
+  },
+  portionButtonText: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: colors.textMuted,
+  },
+  portionButtonTextSelected: {
+    color: colors.background,
+  },
+  portionButtonSubtext: {
+    fontSize: 14,
     fontWeight: "600",
-    minWidth: 60,
-    textAlign: "center",
     color: colors.text,
   },
-  portionUnit: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
+  portionButtonSubtextSelected: {
+    color: colors.background,
+    opacity: 0.8,
   },
 
   sectionTitle: {
@@ -290,7 +274,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   notesText: {
     fontSize: 12,
     lineHeight: 12,
-    color: colors.danger,
+    color: colors.textMuted,
   },
   buttonContainer: {
     gap: 12,

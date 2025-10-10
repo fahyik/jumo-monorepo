@@ -1,6 +1,6 @@
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { useState } from "react";
-import { Keyboard, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 
 import { Button } from "@/components/ui/button";
@@ -58,10 +58,23 @@ export function CreateMealForm({
 
       <View style={styles.previewCard}>
         <Text style={styles.previewTitle}>Adding to meal:</Text>
-        <Text style={styles.foodName}>{foodName}</Text>
-        <Text style={styles.portionText}>
-          {portionSize} {portionUnit}
-        </Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ flex: 4 }}>
+            <Text style={styles.foodName}>{foodName}</Text>
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <Text style={styles.portionText}>
+              {portionSize} {portionUnit}
+            </Text>
+          </View>
+        </View>
 
         <View style={styles.macrosRow}>
           <View style={styles.macroItem}>
@@ -113,6 +126,7 @@ export function CreateMealForm({
 
       <View style={styles.formGroup}>
         <Text style={styles.label}>Notes (Optional)</Text>
+        {/* NOTE: keyboard doesnt scroll up for multi-line inputs */}
         <BottomSheetTextInput
           style={[styles.input, styles.textArea]}
           value={notes}
@@ -181,8 +195,9 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     color: colors.text,
   },
   portionText: {
-    fontSize: 14,
-    color: colors.textMuted,
+    fontSize: 20,
+    fontWeight: "200",
+    color: colors.text,
   },
   macrosRow: {
     flexDirection: "row",

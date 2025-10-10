@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Text,
   View,
   useColorScheme,
@@ -135,36 +137,41 @@ export function ImageNutritionScreen({
         </View>
       )}
 
-      <Animated.ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollViewContent,
-          { paddingTop: insets.top },
-        ]}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1 }}
       >
-        {isLoading && (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" />
-            <Text style={styles.loadingText}>Analyzing your food...</Text>
-          </View>
-        )}
+        <Animated.ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[
+            styles.scrollViewContent,
+            { paddingTop: insets.top },
+          ]}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+        >
+          {isLoading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" />
+              <Text style={styles.loadingText}>Analyzing your food...</Text>
+            </View>
+          )}
 
-        {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Error: {error}</Text>
-          </View>
-        )}
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>Error: {error}</Text>
+            </View>
+          )}
 
-        {nutritionData && (
-          <NutritionInfo
-            data={nutritionData}
-            imageUri={imageUri}
-            onCreateMeal={handleCreateMeal}
-          />
-        )}
-      </Animated.ScrollView>
+          {nutritionData && (
+            <NutritionInfo
+              data={nutritionData}
+              imageUri={imageUri}
+              onCreateMeal={handleCreateMeal}
+            />
+          )}
+        </Animated.ScrollView>
+      </KeyboardAvoidingView>
 
       <BottomSheet ref={bottomSheetRef}>
         {mealData && (

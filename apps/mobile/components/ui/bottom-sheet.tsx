@@ -5,7 +5,8 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { ReactNode, forwardRef, useCallback } from "react";
-import { StyleSheet } from "react-native";
+import { Keyboard, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/providers/theme-provider";
 
@@ -16,6 +17,8 @@ interface BottomSheetProps {
 export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
   ({ children }, ref) => {
     const { colors } = useTheme();
+
+    const insets = useSafeAreaInsets();
 
     const renderBackdrop = useCallback(
       (props_: BottomSheetBackdropProps) => (
@@ -31,11 +34,12 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     return (
       <BottomSheetModal
         ref={ref}
-        snapPoints={["60%"]}
+        snapPoints={["100%"]}
         enablePanDownToClose
         enableDynamicSizing={false}
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
+        topInset={insets.top}
         backdropComponent={renderBackdrop}
         backgroundStyle={{
           backgroundColor: colors.background,
@@ -45,7 +49,6 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         }}
       >
         <BottomSheetScrollView
-          style={{ flex: 1 }}
           contentContainerStyle={styles.contentContainer}
           keyboardShouldPersistTaps="handled"
         >
@@ -61,6 +64,6 @@ BottomSheet.displayName = "BottomSheet";
 const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingBottom: 64,
   },
 });
