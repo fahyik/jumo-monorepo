@@ -78,10 +78,10 @@ export function NutritionInfo({
       <View style={styles.headerContainer}>
         <View style={styles.headerTextContainer}>
           <Text style={styles.title}>{data.foodData.name}</Text>
+          <Text style={styles.description}>{data.foodData.description}</Text>
         </View>
         <Image source={{ uri: imageUri }} style={styles.headerImage} />
       </View>
-      <Text style={styles.description}>{data.foodData.description}</Text>
 
       <NutrientDisplay
         title="Nutrition per 100g"
@@ -193,7 +193,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   },
   portionButton: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.oppositeForeground,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 8,

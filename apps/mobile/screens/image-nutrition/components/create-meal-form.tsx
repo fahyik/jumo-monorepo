@@ -141,7 +141,7 @@ export function CreateMealForm({
               date={new Date(value)}
               onConfirm={(date) => {
                 setIsDatePickerOpen(false);
-                onChange(date);
+                onChange(date.toISOString());
               }}
               onCancel={() => setIsDatePickerOpen(false)}
               mode="datetime"

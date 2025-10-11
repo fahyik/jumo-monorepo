@@ -14,6 +14,8 @@ export const getMealsQuerySchema = z.object({
   includeDeleted: z.enum(["true", "false"]).optional(),
   limit: z.string().optional(),
   offset: z.string().optional(),
+  groupBy: z.enum(["day"]).optional(),
+  timezone: z.string().optional(),
 });
 
 export const createMealItemSchema = z.object({

@@ -1,6 +1,3 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { GlassContainer, GlassView } from "expo-glass-effect";
 import { Image } from "expo-image";
 import { useEffect, useRef } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -12,15 +9,12 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { BottomSideNav } from "@/components/navigation/bottom-side-nav";
-import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { createThemedStyles } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 import { useTheme, useThemedStyles } from "@/providers/theme-provider";
 
 export function HomeScreen() {
   const styles = useThemedStyles(themedStyles);
-
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const bottomTabBarHeight = 0;
   const bounceAnimation = useSharedValue(-200);
