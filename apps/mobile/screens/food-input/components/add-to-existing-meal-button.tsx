@@ -6,8 +6,7 @@ import { ActivityIndicator, Alert, Text, View } from "react-native";
 
 import { AdjustedNutrition } from "./nutrition-info";
 
-import { ProviderFood } from "@jumo-monorepo/interfaces";
-import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
+import type { Meal, ProviderFood } from "@jumo-monorepo/interfaces";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
