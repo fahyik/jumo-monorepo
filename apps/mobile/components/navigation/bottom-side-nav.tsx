@@ -1,4 +1,3 @@
-import { BlurView } from "expo-blur";
 import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { Link } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
@@ -14,8 +13,8 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
     <View
       style={{
         position: "absolute",
-        bottom: (bottom ?? 0) + 28 + (isLiquidGlassAvailable() ? 0 : 100),
-        right: 28,
+        bottom: (bottom ?? 0) + 28 + (isLiquidGlassAvailable() ? 60 : 100),
+        right: 16,
         flexDirection: "column",
         gap: 12,
         justifyContent: "center",

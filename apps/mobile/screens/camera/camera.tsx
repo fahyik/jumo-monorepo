@@ -5,23 +5,20 @@ import {
 } from "expo-camera";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Button,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Button, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ImagePicker } from "./image-picker";
+import { ImagePicker } from "./components/image-picker";
 
 import { BackButton } from "@/components/navigation/back";
+import { createThemedStyles } from "@/lib/utils";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 const SCAN_COOLDOWN = 2000; // 2 seconds cooldown between scans
 
 export function CameraScreen() {
+  const styles = useThemedStyles(themedStyles);
+
   const [permission, requestPermission] = useCameraPermissions();
   const [scannedBarcode, setScannedBarcode] =
     useState<BarcodeScanningResult | null>(null);
@@ -43,7 +40,7 @@ export function CameraScreen() {
       if (photo?.uri) {
         setIsCameraActive(false);
         router.navigate({
-          pathname: "/(stacks)/camera/modal-image",
+          pathname: "/(stacks)/camera/photo",
           params: {
             imageUri: photo.uri,
             mimeType: `image/${photo.format}`,
@@ -100,11 +97,11 @@ export function CameraScreen() {
       }
 
       lastScanTime.current = now;
-      console.log(scan);
+      console.log("🔴🔴🔴", scan);
       showFocusBox(scan);
 
       router.navigate({
-        pathname: "/(stacks)/camera/modal-barcode",
+        pathname: "/(stacks)/camera/barcode",
         params: {
           barcode: scan.data,
         },
@@ -138,12 +135,7 @@ export function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          top: insets.top,
-          position: "absolute",
-        }}
-      >
+      <View style={[styles.backButtonContainer, { top: insets.top }]}>
         <BackButton />
       </View>
 
@@ -175,19 +167,12 @@ export function CameraScreen() {
       <View
         style={[styles.optionsContainer, { height: insets.bottom * 2 + 72 }]}
       >
-        <View
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: 16,
-            transform: [{ translateY: "-50%" }],
-          }}
-        >
+        <View style={styles.imagePickerContainer}>
           <ImagePicker
             onImageSelect={(asset) => {
               setIsCameraActive(false);
               router.navigate({
-                pathname: "/(stacks)/camera/modal-image",
+                pathname: "/(stacks)/camera/photo",
                 params: {
                   imageUri: asset.uri,
                   mimeType: asset.mimeType,
@@ -195,35 +180,24 @@ export function CameraScreen() {
               });
             }}
           />
+
+          {/* <Pressable
+            style={{ backgroundColor: "red", height: 50, width: 50 }}
+            onPress={() => handleBarcodeScanned({ data: "3270160694631" })}
+          >
+            {({ pressed }) => (
+              <View
+                style={[styles.shutterBtnOuter, { opacity: pressed ? 0.5 : 1 }]}
+              ></View>
+            )}
+          </Pressable> */}
         </View>
-        <Pressable
-          style={[
-            styles.shutterBtn,
-            {
-              position: "absolute",
-              left: "50%",
-              top: "50%",
-              transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
-            },
-          ]}
-          onPress={takePicture}
-        >
+        <Pressable style={styles.shutterBtn} onPress={takePicture}>
           {({ pressed }) => (
             <View
-              style={[
-                {
-                  opacity: pressed ? 0.5 : 1,
-                },
-              ]}
+              style={[styles.shutterBtnOuter, { opacity: pressed ? 0.5 : 1 }]}
             >
-              <View
-                style={[
-                  styles.shutterBtnInner,
-                  {
-                    backgroundColor: "white",
-                  },
-                ]}
-              />
+              <View style={styles.shutterBtnInner} />
             </View>
           )}
         </Pressable>
@@ -232,7 +206,7 @@ export function CameraScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const themedStyles = createThemedStyles(({ colors }) => ({
   container: {
     flex: 1,
     justifyContent: "center",
@@ -240,6 +214,10 @@ const styles = StyleSheet.create({
   message: {
     textAlign: "center",
     paddingBottom: 10,
+    color: colors.text,
+  },
+  backButtonContainer: {
+    position: "absolute",
   },
   camera: {
     flex: 1,
@@ -250,9 +228,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#ffffff1b",
     width: "100%",
-    // alignItems: "center",
-    // minHeight: 120,
     bottom: 0,
+  },
+  imagePickerContainer: {
+    position: "absolute",
+    top: "50%",
+    left: 16,
+    transform: [{ translateY: "-50%" }],
   },
   button: {
     flex: 1,
@@ -264,6 +246,10 @@ const styles = StyleSheet.create({
     color: "white",
   },
   shutterBtn: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
     backgroundColor: "transparent",
     borderWidth: 4,
     borderColor: "white",
@@ -273,14 +259,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  shutterBtnOuter: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
   shutterBtnInner: {
     width: 60,
     height: 60,
     borderRadius: 64,
+    backgroundColor: "white",
   },
   focusBox: {
     position: "absolute",
     borderWidth: 4,
     borderColor: "#e7a325be",
   },
-});
+}));

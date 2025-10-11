@@ -1,8 +1,6 @@
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { GlassContainer, GlassView } from "expo-glass-effect";
 import { Image } from "expo-image";
-import { useEffect } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -23,7 +21,7 @@ export function HomeScreen() {
 
   const { session } = useAuth();
 
-  const {colors} = useTheme()
+  const { colors } = useTheme();
 
   useEffect(() => {
     bounceAnimation.value = withSpring(0, { damping: 60, stiffness: 1500 });
@@ -37,25 +35,16 @@ export function HomeScreen() {
     <>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={{
-          paddingBottom: bottomTabBarHeight,
-          gap: 16,
-        }}
+        contentContainerStyle={[
+          styles.scrollViewContent,
+          { paddingBottom: bottomTabBarHeight },
+        ]}
       >
-        <View
-          style={{
-            padding: 12,
-
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
+        <View style={styles.headerContainer}>
           <Animated.View style={animatedStyle}>
             <Image
               source={require("@/assets/images/app/watermelon-skipping.png")}
-              style={{ height: 120, width: 120 }}
+              style={styles.headerImage}
             ></Image>
           </Animated.View>
           <ThemedText type="subtitle">
@@ -63,88 +52,12 @@ export function HomeScreen() {
             !
           </ThemedText>
         </View>
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: colors.backgroundMuted,
-              height: 128,
-              borderRadius: 16,
-              padding: 16,
-              justifyContent: "space-between",
-              minWidth: 0,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                height: 40,
-                width: 40,
-                borderRadius: 48,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text>P</Text>
-            </View>
 
-            <ThemedText>Protein</ThemedText>
-            <ThemedText>0 of 128g</ThemedText>
-          </View>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: colors.backgroundMuted,
-              height: 128,
-              borderRadius: 16,
-              padding: 16,
-              justifyContent: "space-between",
-              minWidth: 0,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                height: 40,
-                width: 40,
-                borderRadius: 48,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text>P</Text>
-            </View>
-
-            <ThemedText>Carbs</ThemedText>
-            <ThemedText>0 of 68g</ThemedText>
-          </View>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: colors.backgroundMuted,
-              height: 128,
-              borderRadius: 16,
-              padding: 16,
-              justifyContent: "space-between",
-              minWidth: 0,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                height: 40,
-                width: 40,
-                borderRadius: 48,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text>P</Text>
-            </View>
-
-            <ThemedText>Fats</ThemedText>
-            <ThemedText>0 of 54g</ThemedText>
-          </View>
+        <View style={styles.headerContainer}>
+          <ThemedText type="default">
+            Click on the camera to record your meal
+          </ThemedText>
+          <ThemedText type="default">or the message icon to chat</ThemedText>
         </View>
       </ScrollView>
 
@@ -165,5 +78,40 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     paddingHorizontal: 8,
     backgroundColor: colors.background,
     flexDirection: "column",
+  },
+  scrollViewContent: {
+    gap: 16,
+  },
+  headerContainer: {
+    padding: 12,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+  headerImage: {
+    height: 120,
+    width: 120,
+  },
+  cardsRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: colors.backgroundMuted,
+    height: 128,
+    borderRadius: 16,
+    padding: 16,
+    justifyContent: "space-between",
+    minWidth: 0,
+  },
+  cardIcon: {
+    backgroundColor: "white",
+    height: 40,
+    width: 40,
+    borderRadius: 48,
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));

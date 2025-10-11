@@ -4,6 +4,7 @@
  */
 export type Colors = {
   text: string;
+  textMuted: string;
   foreground: string;
   oppositeForeground: string;
   background: string;
@@ -12,6 +13,8 @@ export type Colors = {
   icon: string;
   tabIconDefault: string;
   tabIconSelected: string;
+
+  danger: string;
 };
 
 const tintColorLight = "#2b2d2eff";
@@ -23,6 +26,7 @@ export const COLORS: {
 } = {
   light: {
     text: "#11181C",
+    textMuted: "#666",
     foreground: "#11181C",
     oppositeForeground: "#ECEDEE",
     background: "#F2F1ED",
@@ -31,16 +35,19 @@ export const COLORS: {
     icon: "#687076",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
+    danger: "#f94848ff",
   },
   dark: {
     text: "#ECEDEE",
+    textMuted: "#969494ff",
     foreground: "#ECEDEE",
-    oppositeForeground: "#11181C",
+    oppositeForeground: "#151515ff",
     background: "#151718",
-    backgroundMuted: "#242728ff",
+    backgroundMuted: "#262626ff",
     tint: tintColorDark,
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
+    danger: "#f94848ff",
   },
 };

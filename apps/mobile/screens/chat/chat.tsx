@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
+import { BouncingText } from "@/components/bouncing-text";
 import { BackButton } from "@/components/navigation/back";
 import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
@@ -31,7 +32,7 @@ export function ChatScreen() {
   const { messages, error, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       fetch: expoFetch as unknown as typeof globalThis.fetch,
-      api: `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/chat`,
+      api: `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/ai/chat`,
       headers: async () => ({
         Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
       }),
@@ -89,12 +90,9 @@ export function ChatScreen() {
               </View>
             </View>
           ))}
-          {(status === "streaming" || status === "submitted") && (
+          {status === "submitted" && (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#0000ff" />
-              <ThemedText style={styles.loadingText}>
-                AI is thinking...
-              </ThemedText>
+              <BouncingText text="cracking..." withLogo />
             </View>
           )}
         </ScrollView>
