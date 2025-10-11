@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FoodInput } from "./food-input";
 
+import { ThemedText } from "@/components/ThemedText";
 import { BouncingText } from "@/components/bouncing-text";
 import { getBarcode } from "@/lib/queries/get-barcode";
 import { createThemedStyles } from "@/lib/utils";
@@ -31,9 +32,9 @@ export function BarcodeScreen({ barcode }: { barcode?: string }) {
   if (error || !barcode) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>
+        <ThemedText style={styles.errorText}>
           {error ? error.message : "An error occurred"}
-        </Text>
+        </ThemedText>
       </View>
     );
   }
@@ -41,7 +42,7 @@ export function BarcodeScreen({ barcode }: { barcode?: string }) {
   if (data === null || !data || data?.success === false) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{"An error occurred"}</Text>
+        <ThemedText style={styles.errorText}>{"An error occurred"}</ThemedText>
       </View>
     );
   }
@@ -60,12 +61,14 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     alignItems: "center",
   },
   errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
-    backgroundColor: "#ffebee",
     borderRadius: 8,
   },
   errorText: {
-    color: "#c62828",
+    color: colors.danger,
     textAlign: "center",
   },
 }));

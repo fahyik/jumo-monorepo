@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FoodInput } from "./food-input";
 import { useImageUpload } from "./hooks/use-image-upload";
 
+import { ThemedText } from "@/components/ThemedText";
 import { BouncingText } from "@/components/bouncing-text";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -32,9 +33,9 @@ export function FoodPhotoScreen({ imageUri, mimeType }: FoodPhotoScreenProps) {
   if (error || nutritionData === null) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>
+        <ThemedText style={styles.errorText}>
           {error ? error : "An error occurred"}
-        </Text>
+        </ThemedText>
       </View>
     );
   }
@@ -53,12 +54,14 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     alignItems: "center",
   },
   errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
-    backgroundColor: "#ffebee",
     borderRadius: 8,
   },
   errorText: {
-    color: "#c62828",
+    color: colors.danger,
     textAlign: "center",
   },
 }));
