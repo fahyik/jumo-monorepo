@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
-import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
+import type { Meal } from "@jumo-monorepo/interfaces";
 
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -41,7 +41,9 @@ export function MealSelector({ meals, onSelect }: MealSelectorProps) {
               activeOpacity={0.7}
             >
               <View style={styles.mealInfo}>
-                <Text style={styles.mealName}>{item.name || "Unnamed meal"}</Text>
+                <Text style={styles.mealName}>
+                  {item.name || "Unnamed meal"}
+                </Text>
                 <Text style={styles.mealTime}>
                   {format(new Date(item.consumedAt), "MMM d, h:mm a")}
                 </Text>

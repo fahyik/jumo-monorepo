@@ -2,7 +2,7 @@
   "extends": "@jumo-monorepo/typescript-config/base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "noEmit": true
+    "outDir": "./dist"
   },
   "include": ["src/**/*"]
 }

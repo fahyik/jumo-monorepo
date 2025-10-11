@@ -1,7 +1,6 @@
-import type { GetMeals } from "@jumo-monorepo/interfaces/src/api/meals.js";
-import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
-
 import { apiClient } from "../api";
+
+import type { GetMeals, Meal } from "@jumo-monorepo/interfaces";
 
 type GetMealsQuery = GetMeals["query"];
 
@@ -26,7 +25,8 @@ export async function getMeals(
 
   if (options?.groupBy) params.append("groupBy", options.groupBy);
   if (options?.timezone) params.append("timezone", options.timezone);
-  if (options?.includeDeleted) params.append("includeDeleted", options.includeDeleted);
+  if (options?.includeDeleted)
+    params.append("includeDeleted", options.includeDeleted);
   if (options?.limit) params.append("limit", options.limit);
   if (options?.offset) params.append("offset", options.offset);
 

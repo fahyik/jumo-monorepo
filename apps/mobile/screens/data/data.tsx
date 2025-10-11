@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { NutrientRow } from "../food-input/components/nutrient-row";
 
-import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
+import type { Meal } from "@jumo-monorepo/interfaces";
 
 import { ThemedText } from "@/components/ThemedText";
 import { getMeals } from "@/lib/queries/get-meals";

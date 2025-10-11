@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { ProviderFood } from "@jumo-monorepo/interfaces/src/domain/meals";
+import type { ProviderFood } from "@jumo-monorepo/interfaces";
 
 import { supabase } from "@/lib/supabase";
 

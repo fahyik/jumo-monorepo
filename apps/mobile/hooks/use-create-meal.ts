@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { CreateMeal } from "@jumo-monorepo/interfaces";
-import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
+import type { CreateMeal, Meal } from "@jumo-monorepo/interfaces";
 
 import { apiClient } from "@/lib/api";
 
