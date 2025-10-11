@@ -97,7 +97,7 @@ export function FoodInput({ providerFoodData }: FoodPhotoScreenProps) {
       Alert.alert("Success", "Meal created successfully!", [
         {
           text: "OK",
-          onPress: () => router.back(),
+          onPress: () => router.replace("/(tabs)/data"),
         },
       ]);
     } catch (error) {

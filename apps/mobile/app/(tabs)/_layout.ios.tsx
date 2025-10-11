@@ -14,15 +14,15 @@ export default function TabLayout() {
     >
       <NativeTabs.Trigger name="index">
         <Label>Home</Label>
-        <Icon sf="house.fill" drawable="home" />
+        <Icon sf={{ default: "house", selected: "house.fill" }} drawable="home" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="data">
-        <Icon sf="chart.bar.fill" drawable="chart" />
+        <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} drawable="chart" />
         <Label>Data</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="profile">
-        <Icon sf="person.fill" drawable="person" />
-        <Label>Profile</Label>
+      <NativeTabs.Trigger name="settings">
+        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} drawable="settings" />
+        <Label>Settings</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
