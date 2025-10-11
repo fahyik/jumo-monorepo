@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
+import { AddToExistingMealButton } from "./add-to-existing-meal-button";
+import { CreateMealButton } from "./create-meal-button";
 import { NutrientDisplay } from "./nutrient-display";
 import { NutrientRow } from "./nutrient-row";
 
 import { ProviderFood } from "@jumo-monorepo/interfaces";
 
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -20,14 +21,9 @@ export interface AdjustedNutrition {
 
 interface NutritionInfoProps {
   data: ProviderFood;
-  onCreateMeal?: (
-    nutritionData: ProviderFood,
-    portionSize: number,
-    adjustedNutrition: AdjustedNutrition
-  ) => void;
 }
 
-export function NutritionInfo({ data, onCreateMeal }: NutritionInfoProps) {
+export function NutritionInfo({ data }: NutritionInfoProps) {
   const styles = useThemedStyles(themedStyles);
   const [multiplier, setMultiplier] = useState(1);
   const [imageUri, setImageUri] = useState<string>("");
@@ -74,21 +70,10 @@ export function NutritionInfo({ data, onCreateMeal }: NutritionInfoProps) {
     data.foodData.nutrients.find((n) => n.id === "carbohydrate")?.amount ?? 0;
 
   const adjustedNutrition = {
-    energy: Math.round(energyPer100g * ratio),
-    carbohydrates: Math.round(carbsPer100g * ratio * 10) / 10,
-    proteins: Math.round(proteinsPer100g * ratio * 10) / 10,
-    fats: Math.round(fatsPer100g * ratio * 10) / 10,
-  };
-
-  const handleCreateNewMeal = () => {
-    onCreateMeal?.(data, userPortionSize, adjustedNutrition);
-  };
-
-  const handleAddToExistingMeal = () => {
-    console.log("Add to existing meal", {
-      portionSize: userPortionSize,
-      nutrition: adjustedNutrition,
-    });
+    energy: Math.round(((energyPer100g * userPortionSize) / 100) * 100) / 100,
+    carbohydrates: Math.round(((carbsPer100g * userPortionSize) / 100) * 100) / 100,
+    proteins: Math.round(((proteinsPer100g * userPortionSize) / 100) * 100) / 100,
+    fats: Math.round(((fatsPer100g * userPortionSize) / 100) * 100) / 100,
   };
 
   return (
@@ -162,13 +147,17 @@ export function NutritionInfo({ data, onCreateMeal }: NutritionInfoProps) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button variant="primary" onPress={handleCreateNewMeal}>
-          Create a new meal
-        </Button>
+        <CreateMealButton
+          nutritionData={data}
+          portionSize={userPortionSize}
+          adjustedNutrition={adjustedNutrition}
+        />
 
-        <Button variant="secondary" onPress={handleAddToExistingMeal}>
-          Add to an existing meal
-        </Button>
+        <AddToExistingMealButton
+          nutritionData={data}
+          portionSize={userPortionSize}
+          adjustedNutrition={adjustedNutrition}
+        />
       </View>
     </View>
   );

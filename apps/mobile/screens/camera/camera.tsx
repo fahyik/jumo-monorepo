@@ -97,7 +97,7 @@ export function CameraScreen() {
       }
 
       lastScanTime.current = now;
-      console.log(scan);
+      console.log("🔴🔴🔴", scan);
       showFocusBox(scan);
 
       router.navigate({
@@ -181,7 +181,7 @@ export function CameraScreen() {
             }}
           />
 
-          <Pressable
+          {/* <Pressable
             style={{ backgroundColor: "red", height: 50, width: 50 }}
             onPress={() => handleBarcodeScanned({ data: "3270160694631" })}
           >
@@ -190,7 +190,7 @@ export function CameraScreen() {
                 style={[styles.shutterBtnOuter, { opacity: pressed ? 0.5 : 1 }]}
               ></View>
             )}
-          </Pressable>
+          </Pressable> */}
         </View>
         <Pressable style={styles.shutterBtn} onPress={takePicture}>
           {({ pressed }) => (

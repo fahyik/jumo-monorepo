@@ -18,6 +18,8 @@ export function BarcodeScreen({ barcode }: { barcode?: string }) {
     enabled: !!barcode,
   });
 
+  console.log(barcode, error);
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>

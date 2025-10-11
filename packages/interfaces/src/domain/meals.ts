@@ -50,7 +50,7 @@ export interface Meal {
   deletedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
-  items?: MealItem[];
+  items: MealItem[];
   nutrients?: { nutrient: Nutrient; amount: number }[];
 }
 
@@ -59,6 +59,7 @@ export interface MealItem {
   userId: string;
   mealId: string;
   providerFoodId: string;
+  providerFood: ProviderFood;
   quantity: number;
   unit: string;
   nutrients: { nutrient: Nutrient; amount: number }[];

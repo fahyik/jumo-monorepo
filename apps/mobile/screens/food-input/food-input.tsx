@@ -1,8 +1,5 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
-import { router } from "expo-router";
-import { useRef, useState } from "react";
-import { Alert, View, useColorScheme } from "react-native";
+import { View, useColorScheme } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -15,14 +12,11 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { CreateMealForm } from "./components/create-meal-form";
-import { AdjustedNutrition, NutritionInfo } from "./components/nutrition-info";
+import { NutritionInfo } from "./components/nutrition-info";
 
 import { ProviderFood } from "@jumo-monorepo/interfaces";
 
 import { ModalClose } from "@/components/navigation/modal-close";
-import { BottomSheet } from "@/components/ui/bottom-sheet";
-import { useCreateMeal } from "@/hooks/use-create-meal";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -33,17 +27,8 @@ interface FoodPhotoScreenProps {
 export function FoodInput({ providerFoodData }: FoodPhotoScreenProps) {
   const styles = useThemedStyles(themedStyles);
   const colorScheme = useColorScheme();
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [mealData, setMealData] = useState<{
-    nutritionData: ProviderFood;
-    portionSize: number;
-    adjustedNutrition: AdjustedNutrition;
-  } | null>(null);
-
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
-
-  const createMealMutation = useCreateMeal();
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -60,58 +45,6 @@ export function FoodInput({ providerFoodData }: FoodPhotoScreenProps) {
     );
     return { opacity };
   });
-
-  const handleCreateMeal = (
-    nutritionData: ProviderFood,
-    portionSize: number,
-    adjustedNutrition: AdjustedNutrition
-  ) => {
-    setMealData({ nutritionData, portionSize, adjustedNutrition });
-    bottomSheetRef.current?.present();
-  };
-
-  const handleMealFormSubmit = async (
-    mealName: string,
-    notes: string,
-    consumedAt: string
-  ) => {
-    if (!mealData) return;
-
-    try {
-      await createMealMutation.mutateAsync({
-        name: mealName,
-        notes: notes || undefined,
-        consumedAt,
-        items: [
-          {
-            providerFoodId: mealData.nutritionData.id,
-            quantity: mealData.portionSize,
-            unit: mealData.nutritionData.foodData.servingSizeUnit,
-          },
-        ],
-      });
-
-      bottomSheetRef.current?.close();
-      setMealData(null);
-
-      Alert.alert("Success", "Meal created successfully!", [
-        {
-          text: "OK",
-          onPress: () => router.replace("/(tabs)/data"),
-        },
-      ]);
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        error instanceof Error ? error.message : "Failed to create meal"
-      );
-    }
-  };
-
-  const handleMealFormCancel = () => {
-    setMealData(null);
-    bottomSheetRef.current?.close();
-  };
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
@@ -139,27 +72,8 @@ export function FoodInput({ providerFoodData }: FoodPhotoScreenProps) {
         onScroll={scrollHandler}
         scrollEventThrottle={16}
       >
-        {providerFoodData && (
-          <NutritionInfo
-            data={providerFoodData}
-            onCreateMeal={handleCreateMeal}
-          />
-        )}
+        {providerFoodData && <NutritionInfo data={providerFoodData} />}
       </Animated.ScrollView>
-
-      <BottomSheet ref={bottomSheetRef}>
-        {mealData && (
-          <CreateMealForm
-            onSubmit={handleMealFormSubmit}
-            onCancel={handleMealFormCancel}
-            foodName={mealData.nutritionData.foodData.name}
-            portionSize={mealData.portionSize}
-            portionUnit={mealData.nutritionData.foodData.servingSizeUnit}
-            adjustedNutrition={mealData.adjustedNutrition}
-            isSubmitting={createMealMutation.isPending}
-          />
-        )}
-      </BottomSheet>
     </SafeAreaView>
   );
 }

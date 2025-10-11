@@ -1,5 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { SectionList, Text, View } from "react-native";
+import { RefreshControl, SectionList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { NutrientRow } from "../food-input/components/nutrient-row";
@@ -7,16 +8,26 @@ import { NutrientRow } from "../food-input/components/nutrient-row";
 import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
 
 import { ThemedText } from "@/components/ThemedText";
-import { useGetMeals } from "@/hooks/use-get-meals";
+import { getMeals } from "@/lib/queries/get-meals";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
 export function DataScreen() {
   const styles = useThemedStyles(themedStyles);
 
-  const { data: mealsGroupedByDay, isLoading } = useGetMeals({
-    groupBy: "day",
+  const options = {
+    groupBy: "day" as const,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  };
+
+  const {
+    data: mealsGroupedByDay,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["meals", options],
+    queryFn: async () => getMeals(options),
   });
 
   const sections = mealsGroupedByDay
@@ -43,10 +54,12 @@ export function DataScreen() {
         contentContainerStyle={styles.contentContainer}
         sections={sections}
         keyExtractor={(item) => item.id}
-        renderSectionHeader={({ section: { title, nutrients } }) => (
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
+        renderSectionHeader={({ section: { title } }) => (
           <View style={styles.sectionHeader}>
             <ThemedText type="subtitle">{formatDate(title)}</ThemedText>
-            {/* <NutrientRow nutrition={nutrients} /> */}
           </View>
         )}
         renderItem={({ item }) => {
@@ -65,7 +78,8 @@ export function DataScreen() {
                 <View style={styles.itemsContainer}>
                   {item.items.map((mealItem, index) => (
                     <Text key={index} style={styles.itemText}>
-                      • {mealItem.quantity} {mealItem.unit}
+                      • {mealItem.providerFood.foodData.name}{" "}
+                      {mealItem.quantity} {mealItem.unit}
                     </Text>
                   ))}
                 </View>
@@ -128,13 +142,15 @@ function formatDate(dateString: string): string {
 const themedStyles = createThemedStyles(({ colors }) => ({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
   contentContainer: {
     paddingHorizontal: 16,
+    paddingBottom: 80,
   },
   sectionHeader: {
     paddingVertical: 12,
-    backgroundColor: "white",
+    backgroundColor: colors.background,
     gap: 8,
   },
   mealItem: {

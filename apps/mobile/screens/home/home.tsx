@@ -52,28 +52,12 @@ export function HomeScreen() {
             !
           </ThemedText>
         </View>
-        <View style={styles.cardsRow}>
-          <View style={styles.card}>
-            <View style={styles.cardIcon}>
-              <Text>P</Text>
-            </View>
-            <ThemedText>Protein</ThemedText>
-            <ThemedText>0 of 128g</ThemedText>
-          </View>
-          <View style={styles.card}>
-            <View style={styles.cardIcon}>
-              <Text>P</Text>
-            </View>
-            <ThemedText>Carbs</ThemedText>
-            <ThemedText>0 of 68g</ThemedText>
-          </View>
-          <View style={styles.card}>
-            <View style={styles.cardIcon}>
-              <Text>P</Text>
-            </View>
-            <ThemedText>Fats</ThemedText>
-            <ThemedText>0 of 54g</ThemedText>
-          </View>
+
+        <View style={styles.headerContainer}>
+          <ThemedText type="default">
+            Click on the camera to record your meal
+          </ThemedText>
+          <ThemedText type="default">or the message icon to chat</ThemedText>
         </View>
       </ScrollView>
 

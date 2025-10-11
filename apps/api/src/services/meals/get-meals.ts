@@ -1,4 +1,5 @@
 import { sql } from "../../db/index.js";
+
 import type { Meal } from "@jumo-monorepo/interfaces";
 
 export interface GetMealsInput {
@@ -23,6 +24,14 @@ export async function getMeals(input: GetMealsInput): Promise<Meal[]> {
         mi.deleted_at as "deletedAt",
         mi.created_at as "createdAt",
         mi.updated_at as "updatedAt",
+        jsonb_build_object(
+          'id', pf.id,
+          'provider', pf.provider,
+          'providerId', pf.provider_id,
+          'foodData', pf.data,
+          'createdAt', pf.created_at,
+          'updatedAt', pf.updated_at
+        ) as "providerFood",
         COALESCE(
           jsonb_agg(
             jsonb_build_object(
@@ -41,10 +50,11 @@ export async function getMeals(input: GetMealsInput): Promise<Meal[]> {
           '[]'::jsonb
         ) as nutrients
       FROM jumo.meal_items mi
+      LEFT JOIN jumo.provider_foods pf ON mi.provider_food_id = pf.id
       LEFT JOIN jumo.meal_items_nutrients min ON mi.id = min.meal_item_id
       LEFT JOIN jumo.nutrients n ON min.nutrient_id = n.id
       ${includeDeleted ? sql`` : sql`WHERE mi.deleted_at IS NULL`}
-      GROUP BY mi.id, mi.user_id, mi.meal_id, mi.provider_food_id, mi.quantity, mi.unit, mi.deleted_at, mi.created_at, mi.updated_at
+      GROUP BY mi.id, pf.id
     ),
     meals_with_items AS (
       SELECT
@@ -63,6 +73,7 @@ export async function getMeals(input: GetMealsInput): Promise<Meal[]> {
               'userId', mi."userId",
               'mealId', mi."mealId",
               'providerFoodId', mi."providerFoodId",
+              'providerFood', mi."providerFood",
               'quantity', mi.quantity,
               'unit', mi.unit,
               'nutrients', mi.nutrients,
@@ -77,7 +88,7 @@ export async function getMeals(input: GetMealsInput): Promise<Meal[]> {
       LEFT JOIN meal_items_with_nutrients mi ON m.id = mi."mealId"
       WHERE m.user_id = ${userId}
       ${includeDeleted ? sql`` : sql`AND m.deleted_at IS NULL`}
-      GROUP BY m.id, m.user_id, m.name, m.notes, m.consumed_at, m.deleted_at, m.created_at, m.updated_at
+      GROUP BY m.id
     )
     SELECT
       id,
