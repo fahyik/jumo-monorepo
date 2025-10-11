@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 
-import { ImageNutritionScreen } from "@/screens/image-nutrition/image-nutrition";
+import { FoodPhotoScreen } from "@/screens/food-input/food-photo-screen";
 
 export default function Photo() {
   const { imageUri, mimeType } = useLocalSearchParams<{
@@ -8,5 +8,5 @@ export default function Photo() {
     mimeType?: string;
   }>();
 
-  return <ImageNutritionScreen imageUri={imageUri} mimeType={mimeType} />;
+  return <FoodPhotoScreen imageUri={imageUri} mimeType={mimeType} />;
 }

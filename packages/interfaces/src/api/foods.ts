@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { ProviderFood } from "../domain/meals.js";
 import type { ApiEndpoint } from "./api-endpoint.js";
 
 // Food schemas
@@ -13,12 +14,12 @@ export type GetFoods = ApiEndpoint<
   never,
   z.infer<typeof getFoodsQuerySchema>,
   never,
-  unknown // OpenFoodFacts API response structure
+  ProviderFood
 >;
 
 export type GetFoodByBarcode = ApiEndpoint<
   never,
   never,
   { barcode: string },
-  unknown // OpenFoodFacts API response structure
+  ProviderFood
 >;

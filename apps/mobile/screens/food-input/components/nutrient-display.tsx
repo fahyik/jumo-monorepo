@@ -37,7 +37,6 @@ export function NutrientDisplay({
         ) : (
           description
         ))}
-
       <View style={styles.macrosRow}>
         <View style={styles.macroItem}>
           <ThemedText style={styles.macroValue}>{nutrition.energy}</ThemedText>

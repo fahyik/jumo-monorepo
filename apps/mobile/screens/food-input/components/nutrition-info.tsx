@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import { NutrientDisplay } from "./nutrient-display";
@@ -7,6 +7,7 @@ import { NutrientRow } from "./nutrient-row";
 import { ProviderFood } from "@jumo-monorepo/interfaces";
 
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -19,7 +20,6 @@ export interface AdjustedNutrition {
 
 interface NutritionInfoProps {
   data: ProviderFood;
-  imageUri: string;
   onCreateMeal?: (
     nutritionData: ProviderFood,
     portionSize: number,
@@ -27,20 +27,38 @@ interface NutritionInfoProps {
   ) => void;
 }
 
-const PORTION_MULTIPLIERS = [
-  { label: "0.5x", value: 0.5 },
-  { label: "Estimated", value: 1 },
-  { label: "1.5x", value: 1.5 },
-  { label: "2x", value: 2 },
-];
-
-export function NutritionInfo({
-  data,
-  imageUri,
-  onCreateMeal,
-}: NutritionInfoProps) {
+export function NutritionInfo({ data, onCreateMeal }: NutritionInfoProps) {
   const styles = useThemedStyles(themedStyles);
   const [multiplier, setMultiplier] = useState(1);
+  const [imageUri, setImageUri] = useState<string>("");
+
+  const PORTION_MULTIPLIERS = useMemo(
+    () => [
+      { label: "0.5x", value: 0.5 },
+      { label: data.provider !== "OFF" ? "Estimated" : "1x", value: 1 },
+      { label: "1.5x", value: 1.5 },
+      { label: "2x", value: 2 },
+    ],
+    [data.provider]
+  );
+
+  useEffect(() => {
+    const fetchImageUri = async () => {
+      if (data.foodData.image.type === "external") {
+        setImageUri(data.foodData.image.url);
+      } else if (data.foodData.image.type === "storage") {
+        const { data: imageUrl } = await supabase.storage
+          .from(data.foodData.image.bucket)
+          .getPublicUrl(data.foodData.image.path);
+
+        if (imageUrl?.publicUrl) {
+          setImageUri(imageUrl.publicUrl);
+        }
+      }
+    };
+
+    fetchImageUri();
+  }, [data.foodData.image]);
 
   // Calculate adjusted nutrition based on user's portion size
   const userPortionSize = data.foodData.servingSize * multiplier;
@@ -49,11 +67,11 @@ export function NutritionInfo({
   const energyPer100g =
     data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
   const proteinsPer100g =
-    data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
+    data.foodData.nutrients.find((n) => n.id === "protein")?.amount ?? 0;
   const fatsPer100g =
-    data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
+    data.foodData.nutrients.find((n) => n.id === "fat")?.amount ?? 0;
   const carbsPer100g =
-    data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
+    data.foodData.nutrients.find((n) => n.id === "carbohydrate")?.amount ?? 0;
 
   const adjustedNutrition = {
     energy: Math.round(energyPer100g * ratio),
@@ -86,9 +104,11 @@ export function NutritionInfo({
       <NutrientDisplay
         title="Nutrition per 100g"
         description={
-          <View style={styles.notesSection}>
-            <Text style={styles.notesText}>{data.foodData.notes}</Text>
-          </View>
+          data.foodData.notes ? (
+            <View style={styles.notesSection}>
+              <Text style={styles.notesText}>{data.foodData.notes}</Text>
+            </View>
+          ) : null
         }
         nutrition={{
           energy: energyPer100g,
@@ -101,7 +121,7 @@ export function NutritionInfo({
       <View style={styles.portionSection}>
         <Text style={styles.sectionTitle}>Your Portion</Text>
         <Text style={styles.notesText}>
-          Adjust your portion size if you think the estimate is inaccurate.
+          Adjust your portion size if you think it is inaccurate.
         </Text>
 
         <View style={styles.portionButtons}>

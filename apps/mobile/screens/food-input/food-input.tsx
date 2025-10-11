@@ -2,16 +2,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Alert, View, useColorScheme } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -26,7 +17,6 @@ import {
 
 import { CreateMealForm } from "./components/create-meal-form";
 import { AdjustedNutrition, NutritionInfo } from "./components/nutrition-info";
-import { useImageUpload } from "./hooks/use-image-upload";
 
 import { ProviderFood } from "@jumo-monorepo/interfaces";
 
@@ -36,15 +26,11 @@ import { useCreateMeal } from "@/hooks/use-create-meal";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
-interface ImageNutritionScreenProps {
-  imageUri?: string;
-  mimeType?: string;
+interface FoodPhotoScreenProps {
+  providerFoodData: ProviderFood;
 }
 
-export function ImageNutritionScreen({
-  imageUri,
-  mimeType,
-}: ImageNutritionScreenProps) {
+export function FoodInput({ providerFoodData }: FoodPhotoScreenProps) {
   const styles = useThemedStyles(themedStyles);
   const colorScheme = useColorScheme();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -74,11 +60,6 @@ export function ImageNutritionScreen({
     );
     return { opacity };
   });
-
-  const { nutritionData, isLoading, error } = useImageUpload(
-    imageUri,
-    mimeType
-  );
 
   const handleCreateMeal = (
     nutritionData: ProviderFood,
@@ -132,14 +113,6 @@ export function ImageNutritionScreen({
     bottomSheetRef.current?.close();
   };
 
-  if (!imageUri) {
-    return (
-      <View style={styles.noImageContainer}>
-        <Text>No image to display</Text>
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <Animated.View
@@ -157,49 +130,22 @@ export function ImageNutritionScreen({
         <ModalClose />
       </View>
 
-      {(isLoading || error) && (
-        <View style={styles.imageWrapper}>
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: imageUri }} style={styles.image} />
-          </View>
-        </View>
-      )}
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1 }}
+      <Animated.ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollViewContent,
+          { paddingTop: insets.top },
+        ]}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
-        <Animated.ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollViewContent,
-            { paddingTop: insets.top },
-          ]}
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
-        >
-          {isLoading && (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" />
-              <Text style={styles.loadingText}>Analyzing your food...</Text>
-            </View>
-          )}
-
-          {error && (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>Error: {error}</Text>
-            </View>
-          )}
-
-          {nutritionData && (
-            <NutritionInfo
-              data={nutritionData}
-              imageUri={imageUri}
-              onCreateMeal={handleCreateMeal}
-            />
-          )}
-        </Animated.ScrollView>
-      </KeyboardAvoidingView>
+        {providerFoodData && (
+          <NutritionInfo
+            data={providerFoodData}
+            onCreateMeal={handleCreateMeal}
+          />
+        )}
+      </Animated.ScrollView>
 
       <BottomSheet ref={bottomSheetRef}>
         {mealData && (

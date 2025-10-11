@@ -8,16 +8,15 @@ export default function StacksLayout() {
         options={{ headerShown: false }}
       ></Stack.Screen>
       <Stack.Screen
-        name="modal-barcode"
+        name="barcode"
         options={{
-          presentation: "modal",
           headerShown: false,
+          animation: "slide_from_bottom",
         }}
       />
       <Stack.Screen
         name="photo"
         options={{
-          // presentation: "modal",
           headerShown: false,
           animation: "slide_from_bottom",
         }}

@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 
-import { BarcodeScreen } from "@/screens/barcode/barcode";
+import { BarcodeScreen } from "@/screens/food-input/barcode-screen";
 
 export default function Modal() {
   const params = useLocalSearchParams();

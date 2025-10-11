@@ -10,10 +10,12 @@ export type ApiEndpoint<
   TBody = never,
   TQuery = never,
   TParams = never,
-  TResponse = unknown
+  TResponse = unknown,
 > = {
   body: TBody;
   query: TQuery;
   params: TParams;
-  response: TResponse;
+  response:
+    | { success: true; data: TResponse }
+    | { success: false; reason?: string };
 };

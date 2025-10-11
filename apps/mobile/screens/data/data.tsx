@@ -1,13 +1,15 @@
 import { format } from "date-fns";
 import { SectionList, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { NutrientRow } from "../food-input/components/nutrient-row";
+
+import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useGetMeals } from "@/hooks/use-get-meals";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
-import { NutrientRow } from "../image-nutrition/components/nutrient-row";
-
-import type { Meal } from "@jumo-monorepo/interfaces/src/domain/meals.js";
 
 export function DataScreen() {
   const styles = useThemedStyles(themedStyles);
@@ -36,48 +38,49 @@ export function DataScreen() {
   }
 
   return (
-    <SectionList
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      sections={sections}
-      keyExtractor={(item) => item.id}
-      renderSectionHeader={({ section: { title, nutrients } }) => (
-        <View style={styles.sectionHeader}>
-          <ThemedText type="subtitle">{formatDate(title)}</ThemedText>
-          <NutrientRow nutrition={nutrients} />
-        </View>
-      )}
-      renderItem={({ item }) => {
-        const mealNutrients = aggregateNutrients([item]);
-        return (
-          <View style={styles.mealItem}>
-            <View style={styles.mealHeader}>
-              <ThemedText style={styles.mealName}>
-                {item.name || "Unnamed meal"}
-              </ThemedText>
-              <ThemedText style={styles.mealTime}>
-                {format(new Date(item.consumedAt), "h:mm a")}
-              </ThemedText>
-            </View>
-            {item.items && item.items.length > 0 && (
-              <View style={styles.itemsContainer}>
-                {item.items.map((mealItem, index) => (
-                  <Text key={index} style={styles.itemText}>
-                    • {mealItem.quantity} {mealItem.unit}
-                  </Text>
-                ))}
-              </View>
-            )}
-            <NutrientRow nutrition={mealNutrients} />
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <SectionList
+        contentContainerStyle={styles.contentContainer}
+        sections={sections}
+        keyExtractor={(item) => item.id}
+        renderSectionHeader={({ section: { title, nutrients } }) => (
+          <View style={styles.sectionHeader}>
+            <ThemedText type="subtitle">{formatDate(title)}</ThemedText>
+            {/* <NutrientRow nutrition={nutrients} /> */}
           </View>
-        );
-      }}
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <ThemedText>No meals found</ThemedText>
-        </View>
-      }
-    />
+        )}
+        renderItem={({ item }) => {
+          const mealNutrients = aggregateNutrients([item]);
+          return (
+            <View style={styles.mealItem}>
+              <View style={styles.mealHeader}>
+                <ThemedText style={styles.mealName}>
+                  {item.name || "Unnamed meal"}
+                </ThemedText>
+                <ThemedText style={styles.mealTime}>
+                  {format(new Date(item.consumedAt), "h:mm a")}
+                </ThemedText>
+              </View>
+              {item.items && item.items.length > 0 && (
+                <View style={styles.itemsContainer}>
+                  {item.items.map((mealItem, index) => (
+                    <Text key={index} style={styles.itemText}>
+                      • {mealItem.quantity} {mealItem.unit}
+                    </Text>
+                  ))}
+                </View>
+              )}
+              <NutrientRow nutrition={mealNutrients} />
+            </View>
+          );
+        }}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <ThemedText>No meals found</ThemedText>
+          </View>
+        }
+      />
+    </SafeAreaView>
   );
 }
 
@@ -125,14 +128,13 @@ function formatDate(dateString: string): string {
 const themedStyles = createThemedStyles(({ colors }) => ({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   contentContainer: {
-    padding: 16,
+    paddingHorizontal: 16,
   },
   sectionHeader: {
     paddingVertical: 12,
-    backgroundColor: colors.background,
+    backgroundColor: "white",
     gap: 8,
   },
   mealItem: {
