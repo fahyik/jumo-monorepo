@@ -1,5 +1,5 @@
 import { sql } from "../../db/index.js";
-import type { MealItem, Nutrient } from "@jumo-monorepo/interfaces";
+import type { MealItem } from "@jumo-monorepo/interfaces";
 
 export interface GetMealItemsInput {
   mealId: string;
@@ -7,87 +7,55 @@ export interface GetMealItemsInput {
   includeDeleted?: boolean;
 }
 
-interface MealItemRow {
-  id: string;
-  userId: string;
-  mealId: string;
-  providerFoodId: string;
-  quantity: number;
-  unit: string;
-  deletedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-  nutrientId: string | null;
-  nutrientName: string | null;
-  nutrientUnit: string | null;
-  nutrientTranslationKey: string | null;
-  nutrientAmount: number | null;
-  nutrientCreatedAt: Date | null;
-  nutrientUpdatedAt: Date | null;
-}
-
 export async function getMealItems(input: GetMealItemsInput): Promise<MealItem[]> {
   const { mealId, userId, includeDeleted = false } = input;
 
-  const rows = await sql<MealItemRow[]>`
+  const rows = await sql<MealItem[]>`
     SELECT
       mi.id,
       mi.user_id as "userId",
       mi.meal_id as "mealId",
       mi.provider_food_id as "providerFoodId",
+      jsonb_build_object(
+        'id', pf.id,
+        'provider', pf.provider,
+        'providerId', pf.provider_id,
+        'rawData', pf.raw_data,
+        'foodData', pf.data,
+        'createdAt', pf.created_at,
+        'updatedAt', pf.updated_at
+      ) as "providerFood",
       mi.quantity,
       mi.unit,
       mi.deleted_at as "deletedAt",
       mi.created_at as "createdAt",
       mi.updated_at as "updatedAt",
-      n.id as "nutrientId",
-      n.name as "nutrientName",
-      n.unit as "nutrientUnit",
-      n.translation_key as "nutrientTranslationKey",
-      n.created_at as "nutrientCreatedAt",
-      n.updated_at as "nutrientUpdatedAt",
-      min.amount as "nutrientAmount"
+      COALESCE(
+        jsonb_agg(
+          jsonb_build_object(
+            'nutrient', jsonb_build_object(
+              'id', n.id,
+              'name', n.name,
+              'unit', n.unit,
+              'translationKey', n.translation_key,
+              'parentId', n.parent_id,
+              'createdAt', n.created_at,
+              'updatedAt', n.updated_at
+            ),
+            'amount', min.amount
+          )
+        ) FILTER (WHERE n.id IS NOT NULL),
+        '[]'::jsonb
+      ) as nutrients
     FROM jumo.meal_items mi
+    LEFT JOIN jumo.provider_foods pf ON mi.provider_food_id = pf.id
     LEFT JOIN jumo.meal_items_nutrients min ON mi.id = min.meal_item_id
     LEFT JOIN jumo.nutrients n ON min.nutrient_id = n.id
     WHERE mi.meal_id = ${mealId} AND mi.user_id = ${userId}
     ${includeDeleted ? sql`` : sql`AND mi.deleted_at IS NULL`}
+    GROUP BY mi.id, pf.id
     ORDER BY mi.created_at ASC
   `;
 
-  const itemsMap = new Map<string, MealItem>();
-
-  for (const row of rows) {
-    if (!itemsMap.has(row.id)) {
-      itemsMap.set(row.id, {
-        id: row.id,
-        userId: row.userId,
-        mealId: row.mealId,
-        providerFoodId: row.providerFoodId,
-        quantity: row.quantity,
-        unit: row.unit,
-        nutrients: [],
-        deletedAt: row.deletedAt ?? undefined,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      });
-    }
-
-    if (row.nutrientId && row.nutrientAmount !== null) {
-      const item = itemsMap.get(row.id)!;
-      item.nutrients.push({
-        nutrient: {
-          id: row.nutrientId,
-          name: row.nutrientName!,
-          unit: row.nutrientUnit!,
-          translationKey: row.nutrientTranslationKey ?? undefined,
-          createdAt: row.nutrientCreatedAt!,
-          updatedAt: row.nutrientUpdatedAt!,
-        },
-        amount: row.nutrientAmount,
-      });
-    }
-  }
-
-  return Array.from(itemsMap.values());
+  return rows;
 }
