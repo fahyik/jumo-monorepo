@@ -1,4 +1,6 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import * as Application from "expo-application";
+import { isEmbeddedLaunch, updateId } from "expo-updates";
+import { TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -6,7 +8,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { createThemedStyles } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 import { useThemedStyles } from "@/providers/theme-provider";
-import { HomeScreen } from "@/screens/home/home";
 
 export default function ProfileScreen() {
   const { signOut } = useAuth();
@@ -14,7 +15,6 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      {/* <ThemedView style={styles.container}> */}
       <TouchableOpacity
         activeOpacity={0.5}
         style={styles.button}
@@ -22,7 +22,15 @@ export default function ProfileScreen() {
       >
         <ThemedText style={{ fontWeight: "bold" }}>Sign Out</ThemedText>
       </TouchableOpacity>
-      {/* </ThemedView> */}
+
+      <ThemedView style={{ paddingVertical: 16 }}>
+        <ThemedText style={styles.versionText}>
+          {`Version: ${Application.nativeApplicationVersion} (${Application.nativeBuildVersion})`}
+        </ThemedText>
+        <ThemedText style={styles.versionText}>
+          {`Build: ${isEmbeddedLaunch === false ? updateId : null}`}
+        </ThemedText>
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -44,5 +52,9 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     gap: 8,
     backgroundColor: colors.backgroundMuted,
     borderColor: colors.icon,
+  },
+  versionText: {
+    fontSize: 12,
+    lineHeight: 12 * 1.5,
   },
 }));

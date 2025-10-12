@@ -53,12 +53,12 @@ export function HomeScreen() {
           </ThemedText>
         </View>
 
-        <View style={styles.headerContainer}>
+        {/* <View style={styles.headerContainer}>
           <ThemedText type="default">
             Click on the camera to record your meal
           </ThemedText>
           <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
+        </View> */}
       </ScrollView>
 
       <BottomSideNav bottom={bottomTabBarHeight}></BottomSideNav>

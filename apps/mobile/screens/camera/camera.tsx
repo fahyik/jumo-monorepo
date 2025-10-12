@@ -165,7 +165,7 @@ export function CameraScreen() {
 
       <View style={styles.infoBox}>
         <Text style={styles.infoText}>
-          💡 Take a photo or scan the barcode of what you are eating
+          {`💡 Take a photo or scan the barcode\nof what you are eating`}
         </Text>
       </View>
 
@@ -288,7 +288,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     opacity: 0.7,
     borderRadius: 12,
     padding: 8,
-    width: "50%",
+    width: "70%",
   },
 
   infoText: {
