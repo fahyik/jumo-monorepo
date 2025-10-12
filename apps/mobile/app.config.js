@@ -1,6 +1,6 @@
 const pkg = require("./package.json");
 
-const BUILD = 4;
+const BUILD = 1;
 const VERSION_CODE = 1;
 
 if (!process.env.APP_VARIANT) {
@@ -162,6 +162,12 @@ export default {
       eas: {
         projectId: "b2c3a18b-aba6-4de0-8de0-89c9fa9e4cf8",
       },
+    },
+    updates: {
+      url: "https://u.expo.dev/b2c3a18b-aba6-4de0-8de0-89c9fa9e4cf8",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
     },
     owner: "heyjumo",
   },
