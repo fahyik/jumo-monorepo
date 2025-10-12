@@ -22,6 +22,8 @@ interface OpenFoodFactsProduct {
   serving_size?: string;
   serving_quantity?: string;
   serving_quantity_unit?: string;
+  product_quantity?: string;
+  product_quantity_unit?: string;
   nutriments?: OpenFoodFactsNutriments;
 }
 
@@ -34,8 +36,12 @@ interface OpenFoodFactsResponse {
 
 export async function getFoodByBarcode({
   barcode,
+  options,
 }: {
   barcode: string;
+  options?: {
+    forceRefresh: boolean;
+  };
 }): Promise<ProviderFood> {
   // Check if provider food already exists in database and is fresh (< TTL days old)
   const [existingFood] = await sql<ProviderFood[]>`
@@ -47,10 +53,10 @@ export async function getFoodByBarcode({
       created_at as "createdAt",
       updated_at as "updatedAt"
     FROM jumo.provider_foods
-    WHERE provider = 'OFF'
+    WHERE provider = 'OpenFoodFacts'
       AND provider_id = ${barcode}
-      AND updated_at > NOW() - ${PROVIDER_FOOD_CACHE_TTL_DAYS} * INTERVAL '1 day'
-  `;
+      ${options?.forceRefresh ? sql`AND FALSE` : sql`AND updated_at > NOW() - ${PROVIDER_FOOD_CACHE_TTL_DAYS} * INTERVAL '1 day'`}
+    ;`;
 
   if (existingFood) {
     return existingFood;
@@ -73,6 +79,8 @@ export async function getFoodByBarcode({
       "serving_quantity",
       "serving_quantity_unit",
       "serving_size",
+      "product_quantity",
+      "product_quantity_unit",
     ],
   })) as OpenFoodFactsResponse;
 
@@ -118,6 +126,8 @@ export async function getFoodByBarcode({
     description: product.generic_name || "",
     servingSize: parseFloat(product.serving_quantity ?? "0") || 0,
     servingSizeUnit: product.serving_quantity_unit || "g",
+    productQuantity: parseFloat(product.product_quantity ?? "0") || 0,
+    productQuantityUnit: product.product_quantity_unit || "g",
     nutrients,
     image: product.image_url
       ? { type: "external", url: product.image_url }
@@ -126,7 +136,7 @@ export async function getFoodByBarcode({
 
   const [providerFood] = await sql<ProviderFood[]>`
     INSERT INTO jumo.provider_foods (provider, provider_id, raw_data, data)
-    VALUES ('OFF', ${barcode}, ${sql.json(JSON.parse(JSON.stringify(result.data.product)))}, ${sql.json(JSON.parse(JSON.stringify(data)))}) 
+    VALUES ('OpenFoodFacts', ${barcode}, ${sql.json(JSON.parse(JSON.stringify(result.data.product)))}, ${sql.json(JSON.parse(JSON.stringify(data)))}) 
     ON CONFLICT (provider, provider_id)
     DO UPDATE SET
       raw_data = EXCLUDED.raw_data,

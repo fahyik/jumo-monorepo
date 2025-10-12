@@ -21,6 +21,8 @@ export interface ProviderFoodData {
   notes?: string;
   servingSize: number;
   servingSizeUnit: string;
+  productQuantity: number;
+  productQuantityUnit: string;
   nutrients: ProviderFoodNutrientPer100g[];
   image:
     | {
