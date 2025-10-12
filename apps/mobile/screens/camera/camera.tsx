@@ -97,7 +97,6 @@ export function CameraScreen() {
       }
 
       lastScanTime.current = now;
-      console.log("🔴🔴🔴", scan);
       showFocusBox(scan);
 
       router.navigate({
@@ -163,6 +162,12 @@ export function CameraScreen() {
           ]}
         />
       )}
+
+      <View style={styles.infoBox}>
+        <Text style={styles.infoText}>
+          💡 Take a photo or scan the barcode of what you are eating
+        </Text>
+      </View>
 
       <View
         style={[styles.optionsContainer, { height: insets.bottom * 2 + 72 }]}
@@ -273,5 +278,24 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     position: "absolute",
     borderWidth: 4,
     borderColor: "#e7a325be",
+  },
+  infoBox: {
+    position: "absolute",
+    bottom: 160,
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
+    backgroundColor: colors.background,
+    opacity: 0.7,
+    borderRadius: 12,
+    padding: 8,
+    width: "50%",
+  },
+
+  infoText: {
+    color: colors.text,
+    fontSize: 14,
+    flex: 1,
+    lineHeight: 20,
+    textAlign: "center",
   },
 }));

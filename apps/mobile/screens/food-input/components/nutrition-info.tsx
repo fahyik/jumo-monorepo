@@ -31,7 +31,10 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
   const PORTION_MULTIPLIERS = useMemo(
     () => [
       { label: "0.5x", value: 0.5 },
-      { label: data.provider !== "OFF" ? "Estimated" : "1x", value: 1 },
+      {
+        label: data.provider !== "OpenFoodFacts" ? "Estimated" : "1x",
+        value: 1,
+      },
       { label: "1.5x", value: 1.5 },
       { label: "2x", value: 2 },
     ],
@@ -57,8 +60,12 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
   }, [data.foodData.image]);
 
   // Calculate adjusted nutrition based on user's portion size
-  const userPortionSize = data.foodData.servingSize * multiplier;
-  const ratio = multiplier;
+  const servingSize = data.foodData.servingSize
+    ? data.foodData.servingSize
+    : data.foodData.productQuantity
+      ? data.foodData.productQuantity / 2
+      : 100;
+  const userPortionSize = servingSize * multiplier;
 
   const energyPer100g =
     data.foodData.nutrients.find((n) => n.id === "energy")?.amount ?? 0;
@@ -71,8 +78,10 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
 
   const adjustedNutrition = {
     energy: Math.round(((energyPer100g * userPortionSize) / 100) * 100) / 100,
-    carbohydrates: Math.round(((carbsPer100g * userPortionSize) / 100) * 100) / 100,
-    proteins: Math.round(((proteinsPer100g * userPortionSize) / 100) * 100) / 100,
+    carbohydrates:
+      Math.round(((carbsPer100g * userPortionSize) / 100) * 100) / 100,
+    proteins:
+      Math.round(((proteinsPer100g * userPortionSize) / 100) * 100) / 100,
     fats: Math.round(((fatsPer100g * userPortionSize) / 100) * 100) / 100,
   };
 
@@ -83,7 +92,9 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
           <Text style={styles.title}>{data.foodData.name}</Text>
           <Text style={styles.description}>{data.foodData.description}</Text>
         </View>
-        <Image source={{ uri: imageUri }} style={styles.headerImage} />
+        {imageUri && (
+          <Image source={{ uri: imageUri }} style={styles.headerImage} />
+        )}
       </View>
 
       <NutrientDisplay
@@ -105,6 +116,12 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
 
       <View style={styles.portionSection}>
         <Text style={styles.sectionTitle}>Your Portion</Text>
+        {data.provider === "OpenFoodFacts" && (
+          <Text style={styles.notesText}>
+            Product Quantity: {data.foodData.productQuantity}
+            {data.foodData.productQuantityUnit}
+          </Text>
+        )}
         <Text style={styles.notesText}>
           Adjust your portion size if you think it is inaccurate.
         </Text>
@@ -136,7 +153,7 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
                     styles.portionButtonSubtextSelected,
                 ]}
               >
-                {data.foodData.servingSize * option.value}
+                {servingSize * option.value}
                 {data.foodData.servingSizeUnit}
               </Text>
             </TouchableOpacity>
