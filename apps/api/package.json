@@ -35,7 +35,7 @@
     "@jumo-monorepo/logger": "*",
     "@openfoodfacts/openfoodfacts-nodejs": "^2.0.0-alpha.19",
     "@supabase/supabase-js": "^2.75.0",
-    "ai": "^5.0.62",
+    "ai": "^5.0.76",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
