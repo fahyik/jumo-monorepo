@@ -10,6 +10,6 @@
     "stop": "supabase stop"
   },
   "devDependencies": {
-    "supabase": "^2.48.3"
+    "supabase": "^2.53.6"
   }
 }
