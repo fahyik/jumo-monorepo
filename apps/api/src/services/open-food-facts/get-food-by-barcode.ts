@@ -1,4 +1,5 @@
 import { sql } from "../../db/index.js";
+import { logger } from "../../logger.js";
 import { convertUnit } from "../../utils/unit-converter.js";
 import { openFoodFactsClient } from "./client.js";
 import { OFF_NUTRIENT_MAPPING } from "./mapping.js";
@@ -32,6 +33,7 @@ interface OpenFoodFactsResponse {
     product?: OpenFoodFactsProduct;
     status: string;
   };
+  error: unknown;
 }
 
 export async function getFoodByBarcode({
@@ -42,7 +44,9 @@ export async function getFoodByBarcode({
   options?: {
     forceRefresh: boolean;
   };
-}): Promise<ProviderFood> {
+}): Promise<
+  { success: true; data: ProviderFood } | { success: false; reason: string }
+> {
   // Check if provider food already exists in database and is fresh (< TTL days old)
   const [existingFood] = await sql<ProviderFood[]>`
     SELECT
@@ -59,7 +63,7 @@ export async function getFoodByBarcode({
     ;`;
 
   if (existingFood) {
-    return existingFood;
+    return { success: true, data: existingFood };
   }
 
   // Fetch nutrients from database
@@ -84,8 +88,17 @@ export async function getFoodByBarcode({
     ],
   })) as OpenFoodFactsResponse;
 
-  if (result.data.status !== "success" || !result.data.product) {
-    throw new Error("Product not found");
+  if (result.error) {
+    logger.error("Error fetching product open food facts client", result.error);
+    return { success: false, reason: "SERVER_ERROR" };
+  }
+
+  if (
+    !["success", "success_with_warnings"].includes(result.data.status) ||
+    !result.data.product
+  ) {
+    logger.warn("Product not found", result);
+    return { success: false, reason: "PRODUCT_NOT_FOUND" };
   }
 
   const product = result.data.product;
@@ -151,5 +164,5 @@ export async function getFoodByBarcode({
       updated_at as "updatedAt"
   `;
 
-  return providerFood;
+  return { success: true, data: providerFood };
 }

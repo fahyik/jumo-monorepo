@@ -32,7 +32,7 @@ export async function getSearchFoodByBarcode(
       options: { forceRefresh: validation.data.forceRefresh },
     });
 
-    res.status(200).json({ success: true, data: result });
+    res.status(200).json(result);
     return;
   } catch (error) {
     next(error);

@@ -40,7 +40,9 @@ export function BarcodeScreen({ barcode }: { barcode?: string }) {
   if (data === null || !data || data?.success === false) {
     return (
       <View style={styles.errorContainer}>
-        <ThemedText style={styles.errorText}>{"An error occurred"}</ThemedText>
+        <ThemedText style={styles.errorText}>
+          {data?.reason ? data?.reason : "An error occurred"}
+        </ThemedText>
       </View>
     );
   }
