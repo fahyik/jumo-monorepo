@@ -9,10 +9,10 @@
     "server.mjs"
   ],
   "devDependencies": {
-    "@eslint/js": "^9.37.0",
+    "@eslint/js": "^9.38.0",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
-    "eslint": "^9.37.0",
+    "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-turbo": "^2.5.8",
     "eslint-import-resolver-typescript": "^4.4.4",
