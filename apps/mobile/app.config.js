@@ -5,7 +5,7 @@ const VERSION_CODE = 1;
 
 if (!process.env.APP_VARIANT) {
   console.warn(
-    '🔴🔴 Env variable APP_VARIANT is undefined. Using "Development"\n[Ignore warning if app config is not required]'
+    '🔴🔴 Env variable APP_VARIANT is undefined. Using "development"\n[Ignore warning if app config is not required]'
   );
 }
 

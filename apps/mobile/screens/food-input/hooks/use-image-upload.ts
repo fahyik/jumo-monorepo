@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import type { ProviderFood } from "@jumo-monorepo/interfaces";
 
+import { API_URL } from "@/lib/env";
 import { supabase } from "@/lib/supabase";
 
 interface UploadResponse {
@@ -36,9 +37,7 @@ export function useImageUpload(
       const token = (await supabase.auth.getSession()).data.session
         ?.access_token;
 
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_API_URL}/ai/upload-photo`,
-        {
+      const response = await fetch(`${API_URL}/ai/upload-photo`, {
           method: "POST",
           body: formData,
           headers: {

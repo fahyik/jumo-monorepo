@@ -1,6 +1,5 @@
+import { API_URL } from "./env";
 import { supabase } from "./supabase";
-
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_API_URL;
 
 export class ApiError extends Error {
   constructor(
