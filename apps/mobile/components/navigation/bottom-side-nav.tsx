@@ -2,8 +2,8 @@ import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { Link } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
 
-import { IconSymbol } from "../ui/IconSymbol";
-
+import { Camera } from "@/assets/icons/camera";
+import { MessageThreeDots } from "@/assets/icons/message-three-dots";
 import { useTheme } from "@/providers/theme-provider";
 
 export function BottomSideNav({ bottom }: { bottom?: number }) {
@@ -44,7 +44,7 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
               alignItems: "center",
             }}
           >
-            <IconSymbol size={28} name="message.fill" color={colors.icon} />
+            <MessageThreeDots fill={colors.icon} />
           </TouchableOpacity>
         </Link>
       </GlassView>
@@ -72,7 +72,7 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
               alignItems: "center",
             }}
           >
-            <IconSymbol size={28} name="camera.fill" color={colors.icon} />
+            <Camera fill={colors.icon} />
           </TouchableOpacity>
         </Link>
       </GlassView>

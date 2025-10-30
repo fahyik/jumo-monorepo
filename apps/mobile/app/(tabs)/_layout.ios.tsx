@@ -7,7 +7,7 @@ export default function TabLayout() {
   const { colors } = useTheme();
 
   return (
-    <NativeTabs tintColor={colors.tint} minimizeBehavior="onScrollDown">
+    <NativeTabs tintColor={colors.primary} minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="index">
         <Label>Home</Label>
         <Icon

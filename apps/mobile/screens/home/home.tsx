@@ -77,10 +77,10 @@ export function HomeScreen() {
             />
           </View>
 
-          <PixelBox>
+          <PixelBox style={{ padding: 4, width: "100%" }}>
             <ThemedText type="subtitle">
-              Hello,{" "}
-              {session?.user?.user_metadata?.name || session?.user?.email} !
+              Hello!
+              {/* {session?.user?.user_metadata?.name || session?.user?.email} ! */}
             </ThemedText>
           </PixelBox>
         </View>

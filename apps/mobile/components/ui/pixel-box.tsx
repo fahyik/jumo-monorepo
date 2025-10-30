@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { StyleSheet, View, ViewStyle } from "react-native";
+import React, { ReactNode, useState } from "react";
+import { LayoutChangeEvent, StyleSheet, View, ViewStyle } from "react-native";
 import Svg, { Rect } from "react-native-svg";
 
 interface PixelBoxProps {
@@ -13,10 +13,12 @@ export const PixelBox = ({
   cornerSize = "md",
   children,
 }: PixelBoxProps) => {
-  const flatStyle = StyleSheet.flatten(style);
+  const [dimensions, setDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
 
-  const width = typeof flatStyle?.width === "number" ? flatStyle.width : 200;
-  const height = typeof flatStyle?.height === "number" ? flatStyle.height : 100;
+  const flatStyle = StyleSheet.flatten(style);
 
   const borderWidth =
     typeof flatStyle?.borderWidth === "number" ? flatStyle.borderWidth : 2;
@@ -26,105 +28,129 @@ export const PixelBox = ({
     typeof flatStyle?.backgroundColor === "string"
       ? flatStyle.backgroundColor
       : "#ffffff00";
+  const padding =
+    typeof flatStyle?.padding === "number" ? flatStyle.padding : 4;
 
   const cornerRadius = cornerSize === "md" ? 8 : 12;
   const cornerGap = cornerRadius / 4;
   const cornerPixels = generateCornerPixels(borderWidth, cornerRadius);
 
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    setDimensions({ width, height });
+  };
+
+  const {
+    borderWidth: _,
+    borderColor: __,
+    backgroundColor: ___,
+    padding: ____,
+    ...contentStyle
+  } = flatStyle || {};
+
   return (
-    <View style={{ width, height }}>
-      <Svg width={width} height={height} style={{ position: "absolute" }}>
-        {/* Background */}
-        <Rect
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          rx={cornerRadius + 2}
-          ry={cornerRadius + 2}
-          fill={backgroundColor}
-        />
-
-        {/* Top and bottom borders */}
-        <Rect
-          x={cornerRadius + cornerGap}
-          y={0}
-          width={width - (cornerRadius + cornerGap) * 2}
-          height={borderWidth}
-          fill={borderColor}
-        />
-        <Rect
-          x={cornerRadius + cornerGap}
-          y={height - borderWidth}
-          width={width - (cornerRadius + cornerGap) * 2}
-          height={borderWidth}
-          fill={borderColor}
-        />
-
-        {/* Left and right borders */}
-        <Rect
-          x={0}
-          y={cornerRadius + cornerGap}
-          width={borderWidth}
-          height={height - (cornerRadius + cornerGap) * 2}
-          fill={borderColor}
-        />
-        <Rect
-          x={width - borderWidth}
-          y={cornerRadius + cornerGap}
-          width={borderWidth}
-          height={height - (cornerRadius + cornerGap) * 2}
-          fill={borderColor}
-        />
-
-        {/* Rounded corner pixels - dynamically generated circular arc */}
-        {/* Top-left corner (swapped with bottom-right) */}
-        {cornerPixels.map((pixel, i) => (
+    <View style={style} onLayout={handleLayout}>
+      {dimensions && (
+        <Svg
+          width={dimensions.width}
+          height={dimensions.height}
+          style={{ position: "absolute" }}
+        >
+          {/* Background */}
           <Rect
-            key={`tl-${i}`}
-            x={cornerRadius - pixel.x}
-            y={cornerRadius - pixel.y}
-            width={borderWidth}
+            x={0}
+            y={0}
+            width={dimensions.width}
+            height={dimensions.height}
+            rx={cornerRadius + 2}
+            ry={cornerRadius + 2}
+            fill={backgroundColor}
+          />
+
+          {/* Top and bottom borders */}
+          <Rect
+            x={cornerRadius + cornerGap}
+            y={0}
+            width={dimensions.width - (cornerRadius + cornerGap) * 2}
             height={borderWidth}
             fill={borderColor}
           />
-        ))}
-
-        {cornerPixels.map((pixel, i) => (
           <Rect
-            key={`tr-${i}`}
-            x={width - cornerRadius - borderWidth + pixel.x}
-            y={cornerRadius - pixel.y}
-            width={borderWidth}
+            x={cornerRadius + cornerGap}
+            y={dimensions.height - borderWidth}
+            width={dimensions.width - (cornerRadius + cornerGap) * 2}
             height={borderWidth}
             fill={borderColor}
           />
-        ))}
 
-        {cornerPixels.map((pixel, i) => (
+          {/* Left and right borders */}
           <Rect
-            key={`bl-${i}`}
-            x={cornerRadius - pixel.x}
-            y={height - cornerRadius - borderWidth + pixel.y}
+            x={0}
+            y={cornerRadius + cornerGap}
             width={borderWidth}
-            height={borderWidth}
+            height={dimensions.height - (cornerRadius + cornerGap) * 2}
             fill={borderColor}
           />
-        ))}
-
-        {cornerPixels.map((pixel, i) => (
           <Rect
-            key={`br-${i}`}
-            x={width - cornerRadius - borderWidth + pixel.x}
-            y={height - cornerRadius - borderWidth + pixel.y}
+            x={dimensions.width - borderWidth}
+            y={cornerRadius + cornerGap}
             width={borderWidth}
-            height={borderWidth}
+            height={dimensions.height - (cornerRadius + cornerGap) * 2}
             fill={borderColor}
           />
-        ))}
-      </Svg>
 
-      <View style={{ padding: borderWidth + 4, flex: 1 }}>{children}</View>
+          {/* Rounded corner pixels - dynamically generated circular arc */}
+          {/* Top-left corner */}
+          {cornerPixels.map((pixel, i) => (
+            <Rect
+              key={`tl-${i}`}
+              x={cornerRadius - pixel.x}
+              y={cornerRadius - pixel.y}
+              width={borderWidth}
+              height={borderWidth}
+              fill={borderColor}
+            />
+          ))}
+
+          {/* Top-right corner */}
+          {cornerPixels.map((pixel, i) => (
+            <Rect
+              key={`tr-${i}`}
+              x={dimensions.width - cornerRadius - borderWidth + pixel.x}
+              y={cornerRadius - pixel.y}
+              width={borderWidth}
+              height={borderWidth}
+              fill={borderColor}
+            />
+          ))}
+
+          {/* Bottom-left corner */}
+          {cornerPixels.map((pixel, i) => (
+            <Rect
+              key={`bl-${i}`}
+              x={cornerRadius - pixel.x}
+              y={dimensions.height - cornerRadius - borderWidth + pixel.y}
+              width={borderWidth}
+              height={borderWidth}
+              fill={borderColor}
+            />
+          ))}
+
+          {/* Bottom-right corner */}
+          {cornerPixels.map((pixel, i) => (
+            <Rect
+              key={`br-${i}`}
+              x={dimensions.width - cornerRadius - borderWidth + pixel.x}
+              y={dimensions.height - cornerRadius - borderWidth + pixel.y}
+              width={borderWidth}
+              height={borderWidth}
+              fill={borderColor}
+            />
+          ))}
+        </Svg>
+      )}
+
+      <View style={[{ padding }, contentStyle]}>{children}</View>
     </View>
   );
 };
