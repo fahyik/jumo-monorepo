@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@ai-sdk/cerebras": "^1.0.25",
-    "@ai-sdk/openai": "^2.0.53",
+    "@ai-sdk/openai": "^2.0.58",
     "@jumo-monorepo/interfaces": "*",
     "@jumo-monorepo/logger": "*",
     "@openfoodfacts/openfoodfacts-nodejs": "^2.0.0-alpha.19",
