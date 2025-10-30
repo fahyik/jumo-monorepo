@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { BouncingText } from "@/components/bouncing-text";
 import { BackButton } from "@/components/navigation/back";
+import { PixelBox } from "@/components/ui/pixel-box";
 import { API_URL } from "@/lib/env";
 import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
@@ -69,7 +70,7 @@ export function ChatScreen() {
                   : styles.assistantMessageContainer,
               ]}
             >
-              <View
+              <PixelBox
                 style={
                   m.role === "user" ? styles.userBubble : styles.assistantBubble
                 }
@@ -88,7 +89,7 @@ export function ChatScreen() {
                       );
                   }
                 })}
-              </View>
+              </PixelBox>
             </View>
           ))}
           {status === "submitted" && (
@@ -118,7 +119,7 @@ export function ChatScreen() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+const themedStyles = createThemedStyles(({ colors }) => ({
   container: {
     flexDirection: "column",
     gap: 8,
@@ -135,9 +136,7 @@ const themedStyles = createThemedStyles(({ colors, isDark }) => ({
     backgroundColor: colors.tint,
     alignSelf: "flex-end",
     maxWidth: "80%",
-    padding: 12,
-    borderRadius: 16,
-    marginVertical: 4,
+    padding: 8,
   },
   userText: {
     color: colors.oppositeForeground,
@@ -146,9 +145,10 @@ const themedStyles = createThemedStyles(({ colors, isDark }) => ({
     backgroundColor: colors.backgroundMuted,
     alignSelf: "flex-start",
     maxWidth: "80%",
-    padding: 12,
-    borderRadius: 16,
-    marginVertical: 4,
+    padding: 8,
+  },
+  textWrapper: {
+    flex: 1,
   },
   scrollView: {
     flex: 1,

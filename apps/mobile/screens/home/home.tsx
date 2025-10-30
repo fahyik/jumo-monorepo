@@ -77,7 +77,7 @@ export function HomeScreen() {
             />
           </View>
 
-          <PixelBox style={{ padding: 4, width: "100%" }}>
+          <PixelBox style={{ padding: 8, width: "100%" }}>
             <ThemedText type="subtitle">
               Hello!
               {/* {session?.user?.user_metadata?.name || session?.user?.email} ! */}

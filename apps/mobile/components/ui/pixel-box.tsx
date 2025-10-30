@@ -49,12 +49,15 @@ export const PixelBox = ({
   } = flatStyle || {};
 
   return (
-    <View style={style} onLayout={handleLayout}>
+    <View
+      style={[{ padding, overflow: "visible" }, contentStyle]}
+      onLayout={handleLayout}
+    >
       {dimensions && (
         <Svg
-          width={dimensions.width}
-          height={dimensions.height}
-          style={{ position: "absolute" }}
+          width={dimensions.width + 1}
+          height={dimensions.height + 1}
+          style={{ position: "absolute", top: 0, left: 0 }}
         >
           {/* Background */}
           <Rect
@@ -150,7 +153,7 @@ export const PixelBox = ({
         </Svg>
       )}
 
-      <View style={[{ padding }, contentStyle]}>{children}</View>
+      {children}
     </View>
   );
 };
