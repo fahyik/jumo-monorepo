@@ -17,6 +17,7 @@ export type Colors = {
   danger: string;
 
   primary: string;
+  primaryLighter: string;
   primaryDarker: string;
 };
 
@@ -41,6 +42,7 @@ export const COLORS: {
     danger: "#f94848ff",
 
     primary: "#EC6565",
+    primaryLighter: "#fed8d8ff",
     primaryDarker: "#CB3030",
   },
   dark: {
@@ -57,6 +59,7 @@ export const COLORS: {
     danger: "#f94848ff",
 
     primary: "#EC6565",
+    primaryLighter: "#2d0303ff",
     primaryDarker: "#CB3030",
   },
 };

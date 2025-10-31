@@ -2,6 +2,8 @@ import React, { ReactNode, useState } from "react";
 import { LayoutChangeEvent, StyleSheet, View, ViewStyle } from "react-native";
 import Svg, { Rect } from "react-native-svg";
 
+import { useTheme } from "@/providers/theme-provider";
+
 interface PixelBoxProps {
   style?: ViewStyle;
   cornerSize?: "md" | "lg";
@@ -18,12 +20,13 @@ export const PixelBox = ({
     height: number;
   } | null>(null);
 
+  const { colors } = useTheme();
+
   const flatStyle = StyleSheet.flatten(style);
 
   const borderWidth =
     typeof flatStyle?.borderWidth === "number" ? flatStyle.borderWidth : 2;
-  const borderColor =
-    typeof flatStyle?.borderColor === "string" ? flatStyle.borderColor : "#000";
+
   const backgroundColor =
     typeof flatStyle?.backgroundColor === "string"
       ? flatStyle.backgroundColor
@@ -34,6 +37,7 @@ export const PixelBox = ({
   const cornerRadius = cornerSize === "md" ? 8 : 12;
   const cornerGap = cornerRadius / 4;
   const cornerPixels = generateCornerPixels(borderWidth, cornerRadius);
+  const borderColor = colors.foreground;
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;

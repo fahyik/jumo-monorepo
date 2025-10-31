@@ -18,6 +18,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { BouncingText } from "@/components/bouncing-text";
 import { BackButton } from "@/components/navigation/back";
 import { PixelBox } from "@/components/ui/pixel-box";
+import { FONTS } from "@/constants/styles/fonts";
 import { API_URL } from "@/lib/env";
 import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
@@ -78,11 +79,7 @@ export function ChatScreen() {
                 {m.parts.map((part, i) => {
                   switch (part.type) {
                     case "text":
-                      return m.role === "user" ? (
-                        <Text key={`${m.id}-${i}`} style={styles.userText}>
-                          {part.text}
-                        </Text>
-                      ) : (
+                      return (
                         <ThemedText key={`${m.id}-${i}`}>
                           {part.text}
                         </ThemedText>
@@ -102,7 +99,7 @@ export function ChatScreen() {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.messageInput}
-            // placeholderTextColor={"lightgray"}
+            // placeholderTextColor={"white"}
             placeholder="Say something..."
             value={input}
             onChange={(e) => setInput(e.nativeEvent.text)}
@@ -130,19 +127,20 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     backgroundColor: colors.backgroundMuted,
     padding: 16,
     borderRadius: 8,
+    borderColor: colors.foreground,
+    borderWidth: 1,
     color: colors.text,
+    fontFamily: FONTS.bodyMedium,
   },
   userBubble: {
-    backgroundColor: colors.tint,
+    backgroundColor: colors.backgroundMuted,
     alignSelf: "flex-end",
     maxWidth: "80%",
     padding: 8,
   },
-  userText: {
-    color: colors.oppositeForeground,
-  },
+  userText: {},
   assistantBubble: {
-    backgroundColor: colors.backgroundMuted,
+    backgroundColor: colors.primaryLighter,
     alignSelf: "flex-start",
     maxWidth: "80%",
     padding: 8,

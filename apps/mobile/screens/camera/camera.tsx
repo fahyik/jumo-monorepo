@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ImagePicker } from "./components/image-picker";
 
 import { BackButton } from "@/components/navigation/back";
+import { FONTS } from "@/constants/styles/fonts";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -284,7 +285,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     bottom: 160,
     left: "50%",
     transform: [{ translateX: "-50%" }],
-    backgroundColor: colors.background,
+    backgroundColor: colors.primaryLighter,
     opacity: 0.7,
     borderRadius: 12,
     padding: 8,
@@ -293,9 +294,10 @@ const themedStyles = createThemedStyles(({ colors }) => ({
 
   infoText: {
     color: colors.text,
-    fontSize: 14,
+    fontFamily: FONTS.bodyMedium,
+    fontSize: 12,
     flex: 1,
-    lineHeight: 20,
+    lineHeight: 16,
     textAlign: "center",
   },
 }));

@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { Animated, View } from "react-native";
 
 import logo from "@/assets/images/icon-egg.png";
+import { FONTS } from "@/constants/styles/fonts";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -102,6 +103,7 @@ const themedStyles = createThemedStyles(({ colors, isDark }) => ({
   loadingText: {
     marginTop: 4,
     fontSize: 12,
+    fontFamily: FONTS.title,
     color: colors.textMuted,
   },
 }));

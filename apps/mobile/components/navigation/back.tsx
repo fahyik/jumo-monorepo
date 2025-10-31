@@ -7,11 +7,10 @@ import { IconSymbol } from "../ui/IconSymbol";
 
 import { COLORS } from "@/constants/styles/colors";
 import { createThemedStyles } from "@/lib/utils";
-import { useTheme, useThemedStyles } from "@/providers/theme-provider";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function BackButton() {
   const router = useRouter();
-  const { colors } = useTheme();
   const styles = useThemedStyles(themedStyles);
 
   return (
@@ -46,20 +45,20 @@ const themedStyles = createThemedStyles(({ colors, isDark }) => ({
     position: "absolute",
     top: 0,
     left: 8,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: "#d3d1d180",
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
   },
   blurContainer: {
-    width: 38,
-    height: 38,
-    borderRadius: 19, // Half of width/height for perfect circle
+    width: 50,
+    height: 50,
+    borderRadius: 25, // Half of width/height for perfect circle
     overflow: "hidden",
   },
   button: {

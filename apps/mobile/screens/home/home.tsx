@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ScrollView, View, useColorScheme } from "react-native";
 import Animated, {
   Easing,
   cancelAnimation,
@@ -9,12 +9,13 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { HealthMetrics } from "./components/health-metrics";
+
 import { ThemedText } from "@/components/ThemedText";
 import { BottomSideNav } from "@/components/navigation/bottom-side-nav";
 import { PixelBox } from "@/components/ui/pixel-box";
 import { createThemedStyles } from "@/lib/utils";
-import { useAuth } from "@/providers/auth-provider";
-import { useTheme, useThemedStyles } from "@/providers/theme-provider";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function HomeScreen() {
   const styles = useThemedStyles(themedStyles);
@@ -27,9 +28,10 @@ export function HomeScreen() {
   const ANIMATION_DURATION = 500 * SPRITE_FRAMES;
   const spriteFrame = useSharedValue(0);
 
-  const { session } = useAuth();
-
-  const { colors } = useTheme();
+  // Typing animation setup
+  const fullText = "Hello! We're feeling good today! :)";
+  const [displayText, setDisplayText] = useState("");
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     spriteFrame.value = 0;
@@ -47,6 +49,21 @@ export function HomeScreen() {
       cancelAnimation(spriteFrame);
     };
   }, [spriteFrame, ANIMATION_DURATION]);
+
+  // Simple typing animation with setTimeout
+  useEffect(() => {
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setDisplayText(fullText.substring(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 100); // 150ms per character
+
+    return () => clearInterval(typingInterval);
+  }, [fullText]);
 
   const spriteAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: -Math.floor(spriteFrame.value) * FRAME_WIDTH }],
@@ -69,7 +86,11 @@ export function HomeScreen() {
             ]}
           >
             <Animated.Image
-              source={require("@/assets/sprites/sprite_1.png")}
+              source={
+                colorScheme === "dark"
+                  ? require("@/assets/sprites/sprite_main_dark.png")
+                  : require("@/assets/sprites/sprite_main.png")
+              }
               style={[
                 { height: FRAME_WIDTH, width: FRAME_WIDTH * SPRITE_FRAMES },
                 spriteAnimatedStyle,
@@ -77,13 +98,12 @@ export function HomeScreen() {
             />
           </View>
 
-          <PixelBox style={{ padding: 8, width: "100%" }}>
-            <ThemedText type="subtitle">
-              Hello!
-              {/* {session?.user?.user_metadata?.name || session?.user?.email} ! */}
-            </ThemedText>
+          <PixelBox style={{ padding: 16, width: "100%" }}>
+            <ThemedText type="subtitle">{displayText}</ThemedText>
           </PixelBox>
         </View>
+
+        <HealthMetrics />
       </ScrollView>
       <BottomSideNav />
     </>
@@ -107,7 +127,6 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     gap: 16,
   },
   headerContainer: {
-    padding: 12,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",

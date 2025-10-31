@@ -1,5 +1,6 @@
 import { Pressable, Text, ViewStyle } from "react-native";
 
+import { FONTS } from "@/constants/styles/fonts";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -58,8 +59,8 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   },
   primaryButtonText: {
     color: colors.oppositeForeground,
+    fontFamily: FONTS.bodyMedium,
     fontSize: 16,
-    fontWeight: "600",
   },
   secondaryButton: {
     backgroundColor: colors.backgroundMuted,
@@ -70,8 +71,8 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   },
   secondaryButtonText: {
     color: colors.text,
+    fontFamily: FONTS.bodyMedium,
     fontSize: 16,
-    fontWeight: "600",
   },
   buttonPressed: {
     opacity: 0.7,

@@ -8,6 +8,7 @@ import { NutrientRow } from "../food-input/components/nutrient-row";
 import type { Meal } from "@jumo-monorepo/interfaces";
 
 import { ThemedText } from "@/components/ThemedText";
+import { FONTS } from "@/constants/styles/fonts";
 import { getMeals } from "@/lib/queries/get-meals";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -59,7 +60,7 @@ export function DataScreen() {
         }
         renderSectionHeader={({ section: { title } }) => (
           <View style={styles.sectionHeader}>
-            <ThemedText type="subtitle">{formatDate(title)}</ThemedText>
+            <ThemedText type="titleSmall">{formatDate(title)}</ThemedText>
           </View>
         )}
         renderItem={({ item }) => {
@@ -77,10 +78,10 @@ export function DataScreen() {
               {item.items && item.items.length > 0 && (
                 <View style={styles.itemsContainer}>
                   {item.items.map((mealItem, index) => (
-                    <Text key={index} style={styles.itemText}>
+                    <ThemedText key={index} style={styles.itemText}>
                       • {mealItem.providerFood.foodData.name}{" "}
                       {mealItem.quantity} {mealItem.unit}
-                    </Text>
+                    </ThemedText>
                   ))}
                 </View>
               )}
@@ -166,7 +167,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     marginBottom: 8,
   },
   mealName: {
-    fontWeight: "600",
+    fontFamily: FONTS.bodyMedium,
   },
   mealTime: {
     fontSize: 14,
@@ -176,7 +177,8 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     gap: 4,
   },
   itemText: {
-    fontSize: 14,
+    fontSize: 12,
+    lineHeight: 18,
     color: colors.text,
     opacity: 0.8,
   },
