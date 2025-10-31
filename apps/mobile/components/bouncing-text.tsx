@@ -101,7 +101,7 @@ export const BouncingText = ({
 
 const themedStyles = createThemedStyles(({ colors, isDark }) => ({
   loadingText: {
-    marginTop: 4,
+    marginTop: 0,
     fontSize: 12,
     fontFamily: FONTS.title,
     color: colors.textMuted,

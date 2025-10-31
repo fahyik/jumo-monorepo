@@ -2,6 +2,7 @@ import { View } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { PixelBox } from "@/components/ui/pixel-box";
+import { FONTS } from "@/constants/styles/fonts";
 import { createThemedStyles } from "@/lib/utils";
 import { useTheme, useThemedStyles } from "@/providers/theme-provider";
 
@@ -71,11 +72,12 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     gap: 12,
   },
   metricLabel: {
-    fontFamily: "IBMPlexMono-Medium",
-    fontSize: 12,
+    fontFamily: FONTS.bodyMedium,
+    fontSize: 14,
   },
   metricSublabel: {
     fontSize: 12,
+    fontFamily: FONTS.bodyBold,
   },
   progressBarContainer: {
     flex: 1,

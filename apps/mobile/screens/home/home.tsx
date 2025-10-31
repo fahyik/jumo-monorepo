@@ -99,7 +99,9 @@ export function HomeScreen() {
           </View>
 
           <PixelBox style={{ padding: 16, width: "100%" }}>
-            <ThemedText type="subtitle">{displayText}</ThemedText>
+            <ThemedText type="defaultSemiBold" style={{ fontSize: 18 }}>
+              {displayText}
+            </ThemedText>
           </PixelBox>
         </View>
 

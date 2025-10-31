@@ -1,10 +1,8 @@
-import { BlurView } from "expo-blur";
 import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { DynamicColorIOS, TouchableOpacity, View } from "react-native";
 
-import { IconSymbol } from "../ui/IconSymbol";
-
+import { ChevronLeft } from "@/assets/icons/chevrons";
 import { COLORS } from "@/constants/styles/colors";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
@@ -25,10 +23,8 @@ export function BackButton() {
           ]}
         >
           <TouchableOpacity style={styles.button} onPress={() => router.back()}>
-            <IconSymbol
-              size={14}
-              name="chevron.left"
-              color={DynamicColorIOS({
+            <ChevronLeft
+              fill={DynamicColorIOS({
                 dark: COLORS["dark"].text,
                 light: COLORS["light"].text,
               })}

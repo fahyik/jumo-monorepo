@@ -278,7 +278,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   focusBox: {
     position: "absolute",
     borderWidth: 4,
-    borderColor: "#e7a325be",
+    borderColor: colors.primaryDarker,
   },
   infoBox: {
     position: "absolute",
