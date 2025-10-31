@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/cerebras": "^1.0.27",
+    "@ai-sdk/cerebras": "^1.0.28",
     "@ai-sdk/openai": "^2.0.59",
     "@jumo-monorepo/interfaces": "*",
     "@jumo-monorepo/logger": "*",
