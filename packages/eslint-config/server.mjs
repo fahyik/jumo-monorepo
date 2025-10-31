@@ -10,6 +10,7 @@ export default tseslint.config(
   },
   eslint.configs.recommended,
   tseslint.configs.recommended,
+  eslintConfigPrettier,
   {
     languageOptions: {
       parser: tseslint.parser,
@@ -44,7 +45,7 @@ export default tseslint.config(
         },
       ],
       eqeqeq: ["error"],
+      curly: ["warn"],
     },
-  },
-  eslintConfigPrettier
+  }
 );

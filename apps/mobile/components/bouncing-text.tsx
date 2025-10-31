@@ -99,7 +99,7 @@ export const BouncingText = ({
   );
 };
 
-const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+const themedStyles = createThemedStyles(({ colors }) => ({
   loadingText: {
     marginTop: 0,
     fontSize: 12,

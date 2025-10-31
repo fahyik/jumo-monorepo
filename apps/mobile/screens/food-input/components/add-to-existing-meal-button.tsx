@@ -26,7 +26,6 @@ interface AddToExistingMealButtonProps {
 export function AddToExistingMealButton({
   nutritionData,
   portionSize,
-  adjustedNutrition,
   onSuccess,
 }: AddToExistingMealButtonProps) {
   const styles = useThemedStyles(themedStyles);

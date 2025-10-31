@@ -9,7 +9,7 @@
     "android": "APP_VARIANT=development expo run:android",
     "ios": "APP_VARIANT=development expo run:ios",
     "web": "APP_VARIANT=development expo start --web",
-    "lint": "APP_VARIANT=development expo lint",
+    "lint": "APP_VARIANT=development expo lint .",
     "build:ios:dev": "eas build --platform ios --profile development --local",
     "check-expo-deps": "APP_VARIANT=development expo install --check"
   },

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FoodInput } from "./food-input";

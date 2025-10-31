@@ -36,7 +36,7 @@ export function BackButton() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+const themedStyles = createThemedStyles(() => ({
   container: {
     position: "absolute",
     top: 0,

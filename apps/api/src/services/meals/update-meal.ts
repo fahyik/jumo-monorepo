@@ -31,7 +31,9 @@ export async function updateMeal(
   }
 
   const updateClause = updates.reduce((acc, update, index) => {
-    if (index === 0) return update;
+    if (index === 0) {
+      return update;
+    }
     return sql`${acc}, ${update}`;
   });
 

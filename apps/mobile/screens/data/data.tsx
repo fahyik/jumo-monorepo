@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { RefreshControl, SectionList, Text, View } from "react-native";
+import { RefreshControl, SectionList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { NutrientRow } from "../food-input/components/nutrient-row";
@@ -109,10 +109,18 @@ function aggregateNutrients(meals: Meal[]) {
     if (meal.nutrients) {
       meal.nutrients.forEach((n) => {
         const nutrientName = n.nutrient.name.toLowerCase();
-        if (nutrientName === "energy") energy += n.amount;
-        if (nutrientName === "carbohydrates") carbohydrates += n.amount;
-        if (nutrientName === "proteins") proteins += n.amount;
-        if (nutrientName === "fats") fats += n.amount;
+        if (nutrientName === "energy") {
+          energy += n.amount;
+        }
+        if (nutrientName === "carbohydrates") {
+          carbohydrates += n.amount;
+        }
+        if (nutrientName === "proteins") {
+          proteins += n.amount;
+        }
+        if (nutrientName === "fats") {
+          fats += n.amount;
+        }
       });
     }
   });

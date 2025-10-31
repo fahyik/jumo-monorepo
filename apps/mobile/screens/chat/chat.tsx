@@ -1,10 +1,8 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useRouter } from "expo-router";
 import { fetch as expoFetch } from "expo/fetch";
 import { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -22,12 +20,10 @@ import { FONTS } from "@/constants/styles/fonts";
 import { API_URL } from "@/lib/env";
 import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
-import { useTheme, useThemedStyles } from "@/providers/theme-provider";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function ChatScreen() {
   const styles = useThemedStyles(themedStyles);
-  const router = useRouter();
-  const { colors } = useTheme();
 
   const [input, setInput] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
@@ -47,7 +43,9 @@ export function ChatScreen() {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
-  if (error) return <Text>{error.message}</Text>;
+  if (error) {
+    return <Text>{error.message}</Text>;
+  }
 
   return (
     <SafeAreaView

@@ -2,16 +2,12 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { Image } from "expo-image";
 import { Platform, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-import { ThemedText } from "@/components/ThemedText";
 import { supabase } from "@/lib/supabase";
-import { useTheme } from "@/providers/theme-provider";
 
 export function AppleSignIn() {
   if (Platform.OS !== "ios") {
     return null;
   }
-
-  const { colors } = useTheme();
 
   return (
     <TouchableOpacity

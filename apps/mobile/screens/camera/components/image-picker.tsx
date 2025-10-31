@@ -9,7 +9,7 @@ interface ImagePickerProps {
 
 export function ImagePicker({ onImageSelect }: ImagePickerProps) {
   const pickImage = async () => {
-    let result = await ExpoImagePicker.launchImageLibraryAsync({
+    const result = await ExpoImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: false,
       quality: 1,

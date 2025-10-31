@@ -21,7 +21,9 @@ export function useImageUpload(
   const [error, setError] = useState<string | null>(null);
 
   const uploadImage = async () => {
-    if (!imageUri) return;
+    if (!imageUri) {
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -32,20 +34,20 @@ export function useImageUpload(
         uri: imageUri,
         type: mimeType ?? "image/jpeg",
         name: "image",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       const token = (await supabase.auth.getSession()).data.session
         ?.access_token;
 
       const response = await fetch(`${API_URL}/ai/upload-photo`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -69,6 +71,7 @@ export function useImageUpload(
     if (imageUri) {
       uploadImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageUri]);
 
   return { nutritionData, isLoading, error };
