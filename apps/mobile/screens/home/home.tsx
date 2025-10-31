@@ -88,8 +88,8 @@ export function HomeScreen() {
             <Animated.Image
               source={
                 colorScheme === "dark"
-                  ? require("@/assets/sprites/sprite_main_dark.png")
-                  : require("@/assets/sprites/sprite_main.png")
+                  ? require("../../assets/sprites/sprite_main_dark.png")
+                  : require("../../assets/sprites/sprite_main.png")
               }
               style={[
                 { height: FRAME_WIDTH, width: FRAME_WIDTH * SPRITE_FRAMES },
