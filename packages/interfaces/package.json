@@ -16,7 +16,7 @@
   "devDependencies": {
     "@jumo-monorepo/typescript-config": "*",
     "@jumo-monorepo/eslint-config": "*",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.0",
     "typescript": "^5.9.3"
   }
 }
