@@ -10,6 +10,7 @@ import { NutrientRow } from "../food-input/components/nutrient-row";
 import type { Meal } from "@jumo-monorepo/interfaces";
 
 import { ThemedText } from "@/components/ThemedText";
+import { PixelBox } from "@/components/ui/pixel-box";
 import { FONTS } from "@/constants/styles/fonts";
 import { getMealItemImage } from "@/lib/queries/get-meal-item-image";
 import { getMeals } from "@/lib/queries/get-meals";
@@ -114,7 +115,7 @@ export function DataScreen() {
         renderItem={({ item }) => {
           const mealNutrients = aggregateNutrients([item]);
           return (
-            <View style={styles.mealItem}>
+            <PixelBox style={styles.mealItem}>
               <View style={styles.mealHeader}>
                 <ThemedText style={styles.mealName}>
                   {item.name || "Unnamed meal"}
@@ -140,7 +141,7 @@ export function DataScreen() {
                 </View>
               )}
               <NutrientRow nutrition={mealNutrients} />
-            </View>
+            </PixelBox>
           );
         }}
         ListEmptyComponent={
@@ -247,7 +248,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     width: 32,
     height: 32,
     borderRadius: 6,
-    backgroundColor: colors.background,
+    backgroundColor: colors.icon,
   },
   itemText: {
     flex: 1,

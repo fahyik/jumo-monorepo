@@ -47,7 +47,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: colors.background,
+    borderTopColor: colors.foreground,
   },
   macroItem: {
     alignItems: "center",
