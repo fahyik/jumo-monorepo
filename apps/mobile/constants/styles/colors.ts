@@ -15,6 +15,10 @@ export type Colors = {
   tabIconSelected: string;
 
   danger: string;
+
+  primary: string;
+  primaryLighter: string;
+  primaryDarker: string;
 };
 
 const tintColorLight = "#2b2d2eff";
@@ -36,6 +40,10 @@ export const COLORS: {
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
     danger: "#f94848ff",
+
+    primary: "#EC6565",
+    primaryLighter: "#fed8d8ff",
+    primaryDarker: "#CB3030",
   },
   dark: {
     text: "#ECEDEE",
@@ -49,5 +57,9 @@ export const COLORS: {
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
     danger: "#f94848ff",
+
+    primary: "#EC6565",
+    primaryLighter: "#2d0303ff",
+    primaryDarker: "#CB3030",
   },
 };

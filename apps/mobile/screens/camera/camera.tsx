@@ -4,13 +4,14 @@ import {
   useCameraPermissions,
 } from "expo-camera";
 import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Animated, Button, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ImagePicker } from "./components/image-picker";
 
 import { BackButton } from "@/components/navigation/back";
+import { FONTS } from "@/constants/styles/fonts";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -277,14 +278,14 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   focusBox: {
     position: "absolute",
     borderWidth: 4,
-    borderColor: "#e7a325be",
+    borderColor: colors.primaryDarker,
   },
   infoBox: {
     position: "absolute",
     bottom: 160,
     left: "50%",
     transform: [{ translateX: "-50%" }],
-    backgroundColor: colors.background,
+    backgroundColor: colors.primaryLighter,
     opacity: 0.7,
     borderRadius: 12,
     padding: 8,
@@ -293,9 +294,10 @@ const themedStyles = createThemedStyles(({ colors }) => ({
 
   infoText: {
     color: colors.text,
-    fontSize: 14,
+    fontFamily: FONTS.bodyMedium,
+    fontSize: 12,
     flex: 1,
-    lineHeight: 20,
+    lineHeight: 16,
     textAlign: "center",
   },
 }));

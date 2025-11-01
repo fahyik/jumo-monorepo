@@ -25,6 +25,10 @@ function App() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    Silkscreen: require("../assets/fonts/Silkscreen-Regular.ttf"),
+    "IBMPlexMono-Bold": require("../assets/fonts/IBMPlexMono-Bold.ttf"),
+    "IBMPlexMono-Medium": require("../assets/fonts/IBMPlexMono-Medium.ttf"),
+    "IBMPlexMono-Regular": require("../assets/fonts/IBMPlexMono-Regular.ttf"),
   });
 
   const { session, isLoading } = useAuth();

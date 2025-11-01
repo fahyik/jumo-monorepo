@@ -1,1 +1,1 @@
-export type Spacings = {};
+export type Spacings = object;

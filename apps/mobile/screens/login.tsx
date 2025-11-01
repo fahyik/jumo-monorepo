@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -49,7 +49,7 @@ export function LoginScreen() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors }) => ({
+const themedStyles = createThemedStyles(() => ({
   container: {
     padding: 12,
     height: "100%",

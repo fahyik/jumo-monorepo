@@ -6,7 +6,7 @@ import { IconSymbol } from "../ui/IconSymbol";
 
 import { COLORS } from "@/constants/styles/colors";
 import { createThemedStyles } from "@/lib/utils";
-import { useTheme, useThemedStyles } from "@/providers/theme-provider";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function ModalClose() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export function ModalClose() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+const themedStyles = createThemedStyles(() => ({
   container: {
     width: "100%",
     flexDirection: "row",

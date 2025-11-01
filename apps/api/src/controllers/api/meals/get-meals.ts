@@ -1,5 +1,5 @@
-import { NextFunction, Response } from "express";
 import { formatInTimeZone } from "date-fns-tz";
+import { NextFunction, Response } from "express";
 
 import { AuthenticatedRequest } from "../../../middleware/interfaces.js";
 import { getMeals as getMealsService } from "../../../services/meals/get-meals.js";
@@ -24,6 +24,8 @@ export async function getMeals(
       return;
     }
 
+    const timezone = validation.data.timezone || "UTC";
+
     const meals = await getMealsService({
       userId,
       includeDeleted: validation.data.includeDeleted === "true",
@@ -33,10 +35,12 @@ export async function getMeals(
       offset: validation.data.offset
         ? parseInt(validation.data.offset)
         : undefined,
+      from: validation.data.from,
+      to: validation.data.to,
+      timezone,
     });
 
     if (validation.data.groupBy === "day") {
-      const timezone = validation.data.timezone || "UTC";
       const groupedByDay = meals.reduce(
         (acc, meal) => {
           const date = formatInTimeZone(

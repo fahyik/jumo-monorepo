@@ -1,10 +1,8 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useRouter } from "expo-router";
 import { fetch as expoFetch } from "expo/fetch";
 import { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -17,15 +15,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { BouncingText } from "@/components/bouncing-text";
 import { BackButton } from "@/components/navigation/back";
+import { PixelBox } from "@/components/ui/pixel-box";
+import { FONTS } from "@/constants/styles/fonts";
 import { API_URL } from "@/lib/env";
 import { supabase } from "@/lib/supabase";
 import { createThemedStyles } from "@/lib/utils";
-import { useTheme, useThemedStyles } from "@/providers/theme-provider";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function ChatScreen() {
   const styles = useThemedStyles(themedStyles);
-  const router = useRouter();
-  const { colors } = useTheme();
 
   const [input, setInput] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
@@ -45,7 +43,9 @@ export function ChatScreen() {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
-  if (error) return <Text>{error.message}</Text>;
+  if (error) {
+    return <Text>{error.message}</Text>;
+  }
 
   return (
     <SafeAreaView
@@ -69,7 +69,7 @@ export function ChatScreen() {
                   : styles.assistantMessageContainer,
               ]}
             >
-              <View
+              <PixelBox
                 style={
                   m.role === "user" ? styles.userBubble : styles.assistantBubble
                 }
@@ -77,18 +77,14 @@ export function ChatScreen() {
                 {m.parts.map((part, i) => {
                   switch (part.type) {
                     case "text":
-                      return m.role === "user" ? (
-                        <Text key={`${m.id}-${i}`} style={styles.userText}>
-                          {part.text}
-                        </Text>
-                      ) : (
+                      return (
                         <ThemedText key={`${m.id}-${i}`}>
                           {part.text}
                         </ThemedText>
                       );
                   }
                 })}
-              </View>
+              </PixelBox>
             </View>
           ))}
           {status === "submitted" && (
@@ -101,7 +97,7 @@ export function ChatScreen() {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.messageInput}
-            // placeholderTextColor={"lightgray"}
+            // placeholderTextColor={"white"}
             placeholder="Say something..."
             value={input}
             onChange={(e) => setInput(e.nativeEvent.text)}
@@ -118,7 +114,7 @@ export function ChatScreen() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+const themedStyles = createThemedStyles(({ colors }) => ({
   container: {
     flexDirection: "column",
     gap: 8,
@@ -129,26 +125,26 @@ const themedStyles = createThemedStyles(({ colors, isDark }) => ({
     backgroundColor: colors.backgroundMuted,
     padding: 16,
     borderRadius: 8,
+    borderColor: colors.foreground,
+    borderWidth: 1,
     color: colors.text,
+    fontFamily: FONTS.bodyMedium,
   },
   userBubble: {
-    backgroundColor: colors.tint,
+    backgroundColor: colors.backgroundMuted,
     alignSelf: "flex-end",
     maxWidth: "80%",
-    padding: 12,
-    borderRadius: 16,
-    marginVertical: 4,
+    padding: 8,
   },
-  userText: {
-    color: colors.oppositeForeground,
-  },
+  userText: {},
   assistantBubble: {
-    backgroundColor: colors.backgroundMuted,
+    backgroundColor: colors.primaryLighter,
     alignSelf: "flex-start",
     maxWidth: "80%",
-    padding: 12,
-    borderRadius: 16,
-    marginVertical: 4,
+    padding: 8,
+  },
+  textWrapper: {
+    flex: 1,
   },
   scrollView: {
     flex: 1,

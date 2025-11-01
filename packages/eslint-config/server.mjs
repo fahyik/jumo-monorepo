@@ -6,15 +6,22 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["build/", "**/*.js", "**/*.config.ts", "**/*.config.js"],
+    ignores: [
+      "build/",
+      "**/*.js",
+      "**/*.config.ts",
+      "**/*.config.js",
+      "**/*.config.mjs",
+    ],
   },
   eslint.configs.recommended,
   tseslint.configs.recommended,
+  eslintConfigPrettier,
   {
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: "./tsconfig.json",
+        projectService: true,
       },
     },
     plugins: {
@@ -44,7 +51,7 @@ export default tseslint.config(
         },
       ],
       eqeqeq: ["error"],
+      curly: ["warn"],
     },
-  },
-  eslintConfigPrettier
+  }
 );

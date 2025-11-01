@@ -34,7 +34,7 @@
     "@jumo-monorepo/logger": "*",
     "@openfoodfacts/openfoodfacts-nodejs": "^2.0.0-alpha.19",
     "@supabase/supabase-js": "^2.78.0",
-    "ai": "^5.0.84",
+    "ai": "^5.0.86",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
@@ -51,7 +51,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@eslint/js": "^9.38.0",
+    "@eslint/js": "^9.39.0",
     "@jumo-monorepo/eslint-config": "*",
     "@jumo-monorepo/jest-presets": "*",
     "@jumo-monorepo/typescript-config": "*",
@@ -66,7 +66,7 @@
     "@types/pg": "^8.15.6",
     "@types/uuid": "^11.0.0",
     "dotenv": "^17.2.3",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "tsconfig-paths": "^4.2.0",

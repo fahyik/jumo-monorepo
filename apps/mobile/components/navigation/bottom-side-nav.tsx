@@ -2,9 +2,11 @@ import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { Link } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
 
-import { IconSymbol } from "../ui/IconSymbol";
-
+import { Camera } from "@/assets/icons/camera";
+import { MessageThreeDots } from "@/assets/icons/message-three-dots";
 import { useTheme } from "@/providers/theme-provider";
+
+const BUTTON_SIZE = 56;
 
 export function BottomSideNav({ bottom }: { bottom?: number }) {
   const { colors } = useTheme();
@@ -23,8 +25,8 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
     >
       <GlassView
         style={{
-          width: 48,
-          height: 48,
+          width: BUTTON_SIZE,
+          height: BUTTON_SIZE,
           borderRadius: 30,
           overflow: "hidden",
           justifyContent: "center",
@@ -35,8 +37,8 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
         <Link href="/(stacks)/chat" asChild>
           <TouchableOpacity
             style={{
-              width: 48,
-              height: 48,
+              width: BUTTON_SIZE,
+              height: BUTTON_SIZE,
               borderRadius: 30,
               borderWidth: 1,
               borderColor: "#d3d1d180",
@@ -44,15 +46,15 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
               alignItems: "center",
             }}
           >
-            <IconSymbol size={28} name="message.fill" color={colors.icon} />
+            <MessageThreeDots fill={colors.icon} />
           </TouchableOpacity>
         </Link>
       </GlassView>
 
       <GlassView
         style={{
-          width: 48,
-          height: 48,
+          width: BUTTON_SIZE,
+          height: BUTTON_SIZE,
           borderRadius: 30,
           overflow: "hidden",
           justifyContent: "center",
@@ -63,8 +65,8 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
         <Link href="/(stacks)/camera" asChild>
           <TouchableOpacity
             style={{
-              width: 48,
-              height: 48,
+              width: BUTTON_SIZE,
+              height: BUTTON_SIZE,
               borderRadius: 30,
               borderWidth: 1,
               borderColor: "#d3d1d180",
@@ -72,7 +74,7 @@ export function BottomSideNav({ bottom }: { bottom?: number }) {
               alignItems: "center",
             }}
           >
-            <IconSymbol size={28} name="camera.fill" color={colors.icon} />
+            <Camera fill={colors.icon} />
           </TouchableOpacity>
         </Link>
       </GlassView>

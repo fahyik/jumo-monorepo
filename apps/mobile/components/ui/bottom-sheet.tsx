@@ -5,7 +5,7 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { ReactNode, forwardRef, useCallback } from "react";
-import { Keyboard, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/providers/theme-provider";

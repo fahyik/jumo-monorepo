@@ -1,5 +1,11 @@
-export function convertUnit(amount: number, fromUnit: string, toUnit: string): number {
-  if (fromUnit === toUnit) return amount;
+export function convertUnit(
+  amount: number,
+  fromUnit: string,
+  toUnit: string
+): number {
+  if (fromUnit === toUnit) {
+    return amount;
+  }
 
   // g to mg
   if (fromUnit === "g" && toUnit === "mg") {

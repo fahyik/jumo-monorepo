@@ -1,17 +1,14 @@
-import { BlurView } from "expo-blur";
 import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { DynamicColorIOS, TouchableOpacity, View } from "react-native";
 
-import { IconSymbol } from "../ui/IconSymbol";
-
+import { ChevronLeft } from "@/assets/icons/chevrons";
 import { COLORS } from "@/constants/styles/colors";
 import { createThemedStyles } from "@/lib/utils";
-import { useTheme, useThemedStyles } from "@/providers/theme-provider";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function BackButton() {
   const router = useRouter();
-  const { colors } = useTheme();
   const styles = useThemedStyles(themedStyles);
 
   return (
@@ -26,10 +23,8 @@ export function BackButton() {
           ]}
         >
           <TouchableOpacity style={styles.button} onPress={() => router.back()}>
-            <IconSymbol
-              size={14}
-              name="chevron.left"
-              color={DynamicColorIOS({
+            <ChevronLeft
+              fill={DynamicColorIOS({
                 dark: COLORS["dark"].text,
                 light: COLORS["light"].text,
               })}
@@ -41,25 +36,25 @@ export function BackButton() {
   );
 }
 
-const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+const themedStyles = createThemedStyles(() => ({
   container: {
     position: "absolute",
     top: 0,
     left: 8,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: "#d3d1d180",
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
   },
   blurContainer: {
-    width: 38,
-    height: 38,
-    borderRadius: 19, // Half of width/height for perfect circle
+    width: 50,
+    height: 50,
+    borderRadius: 25, // Half of width/height for perfect circle
     overflow: "hidden",
   },
   button: {

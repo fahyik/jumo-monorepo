@@ -1,7 +1,7 @@
 import * as ExpoImagePicker from "expo-image-picker";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Landscape } from "@/assets/icons/landscape";
 
 interface ImagePickerProps {
   onImageSelect?: (asset: ExpoImagePicker.ImagePickerAsset) => void;
@@ -9,12 +9,12 @@ interface ImagePickerProps {
 
 export function ImagePicker({ onImageSelect }: ImagePickerProps) {
   const pickImage = async () => {
-    let result = await ExpoImagePicker.launchImageLibraryAsync({
+    const result = await ExpoImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: false,
       quality: 1,
       allowsMultipleSelection: false,
-      exif: true
+      exif: true,
     });
 
     if (!result.canceled) {
@@ -24,7 +24,7 @@ export function ImagePicker({ onImageSelect }: ImagePickerProps) {
 
   return (
     <TouchableOpacity style={styles.container} onPress={pickImage}>
-      <IconSymbol name="photo" color={"white"} size={32} />
+      <Landscape fill="white" />
     </TouchableOpacity>
   );
 }
@@ -35,8 +35,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "flex-start",
     padding: 4,
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "white",
   },
 });

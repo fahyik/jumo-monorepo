@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { Animated, View } from "react-native";
 
 import logo from "@/assets/images/icon-egg.png";
+import { FONTS } from "@/constants/styles/fonts";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -98,10 +99,11 @@ export const BouncingText = ({
   );
 };
 
-const themedStyles = createThemedStyles(({ colors, isDark }) => ({
+const themedStyles = createThemedStyles(({ colors }) => ({
   loadingText: {
-    marginTop: 4,
+    marginTop: 0,
     fontSize: 12,
+    fontFamily: FONTS.title,
     color: colors.textMuted,
   },
 }));

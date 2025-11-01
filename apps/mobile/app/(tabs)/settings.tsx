@@ -1,6 +1,6 @@
 import * as Application from "expo-application";
 import { isEmbeddedLaunch, updateId } from "expo-updates";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";

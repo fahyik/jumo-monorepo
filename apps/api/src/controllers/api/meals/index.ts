@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { deleteMeal } from "./delete-meal.js";
+import { getImage } from "./get-image.js";
 import { getMealById } from "./get-meal-by-id.js";
 import { getMeals } from "./get-meals.js";
 import { mealItemsRouter } from "./items/index.js";
@@ -15,6 +16,7 @@ export function mealsRouter() {
   router.get("/:id", getMealById);
   router.patch("/:id", patchMeal);
   router.delete("/:id", deleteMeal);
+  router.get("/images/:userId/:path", getImage);
 
   router.use("/:mealId/items", mealItemsRouter());
 

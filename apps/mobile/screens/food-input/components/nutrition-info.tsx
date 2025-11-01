@@ -1,5 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 
 import { AddToExistingMealButton } from "./add-to-existing-meal-button";
 import { CreateMealButton } from "./create-meal-button";
@@ -8,7 +9,8 @@ import { NutrientRow } from "./nutrient-row";
 
 import { ProviderFood } from "@jumo-monorepo/interfaces";
 
-import { supabase } from "@/lib/supabase";
+import { ThemedText } from "@/components/ThemedText";
+import { getMealItemImage } from "@/lib/queries/get-meal-item-image";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -25,6 +27,7 @@ interface NutritionInfoProps {
 
 export function NutritionInfo({ data }: NutritionInfoProps) {
   const styles = useThemedStyles(themedStyles);
+  const queryClient = useQueryClient();
   const [multiplier, setMultiplier] = useState(1);
   const [imageUri, setImageUri] = useState<string>("");
 
@@ -46,18 +49,22 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
       if (data.foodData.image.type === "external") {
         setImageUri(data.foodData.image.url);
       } else if (data.foodData.image.type === "storage") {
-        const { data: imageUrl } = await supabase.storage
-          .from(data.foodData.image.bucket)
-          .getPublicUrl(data.foodData.image.path);
-
-        if (imageUrl?.publicUrl) {
-          setImageUri(imageUrl.publicUrl);
+        try {
+          const imagePath = data.foodData.image.path;
+          const signedUrl = await queryClient.fetchQuery({
+            queryKey: ["mealItemImage", imagePath],
+            queryFn: () => getMealItemImage(imagePath),
+            staleTime: Infinity,
+          });
+          setImageUri(signedUrl);
+        } catch (error) {
+          console.warn("Failed to fetch image:", error);
         }
       }
     };
 
     fetchImageUri();
-  }, [data.foodData.image]);
+  }, [data.foodData.image, queryClient]);
 
   // Calculate adjusted nutrition based on user's portion size
   const servingSize = data.foodData.servingSize
@@ -89,8 +96,12 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.title}>{data.foodData.name}</Text>
-          <Text style={styles.description}>{data.foodData.description}</Text>
+          <ThemedText type={"title"} style={styles.title}>
+            {data.foodData.name}
+          </ThemedText>
+          <ThemedText style={styles.description}>
+            {data.foodData.description}
+          </ThemedText>
         </View>
         {imageUri && (
           <Image source={{ uri: imageUri }} style={styles.headerImage} />
@@ -102,7 +113,9 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
         description={
           data.foodData.notes ? (
             <View style={styles.notesSection}>
-              <Text style={styles.notesText}>{data.foodData.notes}</Text>
+              <ThemedText style={styles.notesText}>
+                {data.foodData.notes}
+              </ThemedText>
             </View>
           ) : null
         }
@@ -115,16 +128,16 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
       />
 
       <View style={styles.portionSection}>
-        <Text style={styles.sectionTitle}>Your Portion</Text>
+        <ThemedText style={styles.sectionTitle}>Your Portion</ThemedText>
         {data.provider === "OpenFoodFacts" && (
-          <Text style={styles.notesText}>
+          <ThemedText style={styles.notesText}>
             Product Quantity: {data.foodData.productQuantity}
             {data.foodData.productQuantityUnit}
-          </Text>
+          </ThemedText>
         )}
-        <Text style={styles.notesText}>
+        <ThemedText style={styles.notesText}>
           Adjust your portion size if you think it is inaccurate.
-        </Text>
+        </ThemedText>
 
         <View style={styles.portionButtons}>
           {PORTION_MULTIPLIERS.map((option) => (
@@ -137,7 +150,7 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
               onPress={() => setMultiplier(option.value)}
               activeOpacity={0.7}
             >
-              <Text
+              <ThemedText
                 style={[
                   styles.portionButtonText,
                   multiplier === option.value &&
@@ -145,8 +158,8 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
                 ]}
               >
                 {option.label}
-              </Text>
-              <Text
+              </ThemedText>
+              <ThemedText
                 style={[
                   styles.portionButtonSubtext,
                   multiplier === option.value &&
@@ -155,7 +168,7 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
               >
                 {servingSize * option.value}
                 {data.foodData.servingSizeUnit}
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
           ))}
         </View>
@@ -198,7 +211,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     borderRadius: 8,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
     color: colors.text,
   },
@@ -230,8 +243,7 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     backgroundColor: colors.tint,
   },
   portionButtonText: {
-    fontSize: 12,
-    fontWeight: "400",
+    fontSize: 10,
     color: colors.textMuted,
   },
   portionButtonTextSelected: {

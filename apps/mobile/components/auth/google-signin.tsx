@@ -1,5 +1,6 @@
 import {
   GoogleSignin,
+  isErrorWithCode,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { Image } from "expo-image";
@@ -33,7 +34,7 @@ export function GoogleSignIn() {
           const userInfo = await GoogleSignin.signIn();
 
           if (userInfo.data?.idToken) {
-            const { data, error } = await supabase.auth.signInWithIdToken({
+            const { data: _, error } = await supabase.auth.signInWithIdToken({
               provider: "google",
               token: userInfo.data.idToken,
             });
@@ -44,16 +45,18 @@ export function GoogleSignIn() {
           } else {
             throw new Error("no ID token present!");
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.log(error);
-          if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-            // user cancelled the login flow
-          } else if (error.code === statusCodes.IN_PROGRESS) {
-            // operation (e.g. sign in) is in progress already
-          } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-            // play services not available or outdated
-          } else {
-            // some other error happened
+          if (isErrorWithCode(error)) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+              // user cancelled the login flow
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+              // operation (e.g. sign in) is in progress already
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+              // play services not available or outdated
+            } else {
+              // some other error happened
+            }
           }
         }
       }}

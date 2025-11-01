@@ -1,34 +1,72 @@
-import { Image } from "expo-image";
-import { useEffect, useRef } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ScrollView, View, useColorScheme } from "react-native";
 import Animated, {
+  Easing,
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withRepeat,
+  withTiming,
 } from "react-native-reanimated";
+
+import { HealthMetrics } from "./components/health-metrics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { BottomSideNav } from "@/components/navigation/bottom-side-nav";
+import { PixelBox } from "@/components/ui/pixel-box";
 import { createThemedStyles } from "@/lib/utils";
-import { useAuth } from "@/providers/auth-provider";
-import { useTheme, useThemedStyles } from "@/providers/theme-provider";
+import { useThemedStyles } from "@/providers/theme-provider";
 
 export function HomeScreen() {
   const styles = useThemedStyles(themedStyles);
 
   const bottomTabBarHeight = 0;
-  const bounceAnimation = useSharedValue(-200);
 
-  const { session } = useAuth();
+  // Sprite animation setup
+  const SPRITE_FRAMES = 16;
+  const FRAME_WIDTH = 128; // Scaled down from 256
+  const ANIMATION_DURATION = 500 * SPRITE_FRAMES;
+  const spriteFrame = useSharedValue(0);
 
-  const { colors } = useTheme();
+  // Typing animation setup
+  const fullText = "Hello! We're feeling good today! :)";
+  const [displayText, setDisplayText] = useState("");
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
-    bounceAnimation.value = withSpring(0, { damping: 60, stiffness: 1500 });
-  }, [bounceAnimation]);
+    spriteFrame.value = 0;
+    // Animate through sprite frames continuously
+    spriteFrame.value = withRepeat(
+      withTiming(SPRITE_FRAMES - 1, {
+        duration: ANIMATION_DURATION,
+        easing: Easing.linear,
+      }),
+      -1, // infinite repeat
+      false
+    );
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: bounceAnimation.value }],
+    return () => {
+      cancelAnimation(spriteFrame);
+    };
+  }, [spriteFrame, ANIMATION_DURATION]);
+
+  // Simple typing animation with setTimeout
+  useEffect(() => {
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setDisplayText(fullText.substring(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 100); // 150ms per character
+
+    return () => clearInterval(typingInterval);
+  }, [fullText]);
+
+  const spriteAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: -Math.floor(spriteFrame.value) * FRAME_WIDTH }],
   }));
 
   return (
@@ -41,147 +79,33 @@ export function HomeScreen() {
         ]}
       >
         <View style={styles.headerContainer}>
-          <Animated.View style={animatedStyle}>
-            <Image
-              source={require("@/assets/images/app/watermelon-skipping.png")}
-              style={styles.headerImage}
-            ></Image>
-          </Animated.View>
-          <ThemedText type="subtitle">
-            Hello, {session?.user?.user_metadata?.name || session?.user?.email}{" "}
-            !
-          </ThemedText>
+          <View
+            style={[
+              styles.spriteContainer,
+              { width: FRAME_WIDTH, height: FRAME_WIDTH },
+            ]}
+          >
+            <Animated.Image
+              source={
+                colorScheme === "dark"
+                  ? require("../../assets/sprites/sprite_main_dark.png")
+                  : require("../../assets/sprites/sprite_main.png")
+              }
+              style={[
+                { height: FRAME_WIDTH, width: FRAME_WIDTH * SPRITE_FRAMES },
+                spriteAnimatedStyle,
+              ]}
+            />
+          </View>
+
+          <PixelBox style={{ padding: 16, width: "100%" }}>
+            <ThemedText type="defaultSemiBold" style={{ fontSize: 18 }}>
+              {displayText}
+            </ThemedText>
+          </PixelBox>
         </View>
 
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
-        <View style={styles.headerContainer}>
-          <ThemedText type="default">
-            Click on the camera to record your meal
-          </ThemedText>
-          <ThemedText type="default">or the message icon to chat</ThemedText>
-        </View>
+        <HealthMetrics />
       </ScrollView>
       <BottomSideNav />
     </>
@@ -205,7 +129,6 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     gap: 16,
   },
   headerContainer: {
-    padding: 12,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
@@ -214,6 +137,9 @@ const themedStyles = createThemedStyles(({ colors }) => ({
   headerImage: {
     height: 120,
     width: 120,
+  },
+  spriteContainer: {
+    overflow: "hidden",
   },
   cardsRow: {
     flexDirection: "row",
