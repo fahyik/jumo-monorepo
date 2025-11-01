@@ -106,7 +106,7 @@ export async function postUploadPhoto(
       const fileExtension = req.file.mimetype.split("/")[1];
       const filePath = `${userId}/${timestamp}.${fileExtension}`;
 
-      const BUCKET = "image-uploads";
+      const BUCKET = "user-photo-uploads";
 
       const uploadResult = await supabase.storage
         .from(BUCKET)

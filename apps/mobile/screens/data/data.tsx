@@ -1,6 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { RefreshControl, SectionList, View } from "react-native";
+import { Image, ImageStyle } from "expo-image";
+import { useEffect, useState } from "react";
+import { RefreshControl, SectionList, StyleProp, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { NutrientRow } from "../food-input/components/nutrient-row";
@@ -9,9 +11,55 @@ import type { Meal } from "@jumo-monorepo/interfaces";
 
 import { ThemedText } from "@/components/ThemedText";
 import { FONTS } from "@/constants/styles/fonts";
+import { getMealItemImage } from "@/lib/queries/get-meal-item-image";
 import { getMeals } from "@/lib/queries/get-meals";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
+
+interface MealItemImageProps {
+  image:
+    | { type: "storage"; bucket: string; path: string }
+    | { type: "external"; url: string };
+  style: StyleProp<ImageStyle>;
+}
+
+function MealItemImage({ image, style }: MealItemImageProps) {
+  const queryClient = useQueryClient();
+  const [imageUri, setImageUri] = useState<string>("");
+
+  useEffect(() => {
+    const fetchImageUri = async () => {
+      if (image.type === "external") {
+        setImageUri(image.url);
+      } else if (image.type === "storage") {
+        try {
+          const imagePath = image.path;
+          const signedUrl = await queryClient.fetchQuery({
+            queryKey: ["mealItemImage", imagePath],
+            queryFn: () => getMealItemImage(imagePath),
+            staleTime: Infinity,
+          });
+          setImageUri(signedUrl);
+        } catch (error) {
+          console.warn("Failed to fetch image:", error);
+        }
+      }
+    };
+
+    fetchImageUri();
+  }, [image, queryClient]);
+
+  return (
+    <Image
+      source={{ uri: imageUri }}
+      style={style}
+      contentFit="cover"
+      placeholder={require("../../assets/images/app/egg-cracking.png")}
+      placeholderContentFit="cover"
+      transition={200}
+    />
+  );
+}
 
 export function DataScreen() {
   const styles = useThemedStyles(themedStyles);
@@ -78,10 +126,16 @@ export function DataScreen() {
               {item.items && item.items.length > 0 && (
                 <View style={styles.itemsContainer}>
                   {item.items.map((mealItem, index) => (
-                    <ThemedText key={index} style={styles.itemText}>
-                      • {mealItem.providerFood.foodData.name}{" "}
-                      {mealItem.quantity} {mealItem.unit}
-                    </ThemedText>
+                    <View key={index} style={styles.itemRow}>
+                      <MealItemImage
+                        image={mealItem.providerFood.foodData.image}
+                        style={styles.itemThumbnail}
+                      />
+                      <ThemedText style={styles.itemText}>
+                        {mealItem.providerFood.foodData.name}{" "}
+                        {mealItem.quantity} {mealItem.unit}
+                      </ThemedText>
+                    </View>
                   ))}
                 </View>
               )}
@@ -182,9 +236,21 @@ const themedStyles = createThemedStyles(({ colors }) => ({
     opacity: 0.7,
   },
   itemsContainer: {
-    gap: 4,
+    gap: 8,
+  },
+  itemRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  itemThumbnail: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    backgroundColor: colors.background,
   },
   itemText: {
+    flex: 1,
     fontSize: 12,
     lineHeight: 18,
     color: colors.text,

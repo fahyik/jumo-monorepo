@@ -16,6 +16,8 @@ export const getMealsQuerySchema = z.object({
   offset: z.string().optional(),
   groupBy: z.enum(["day"]).optional(),
   timezone: z.string().optional(),
+  from: z.iso.date().optional(),
+  to: z.iso.date().optional(),
 });
 
 export const createMealItemSchema = z.object({
@@ -81,4 +83,11 @@ export type DeleteMealItem = ApiEndpoint<
   never,
   { mealId: string; id: string },
   void
+>;
+
+export type GetMealItemImage = ApiEndpoint<
+  never,
+  never,
+  { path: string; userId: string },
+  { url: string }
 >;

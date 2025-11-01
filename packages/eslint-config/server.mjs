@@ -6,7 +6,13 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["build/", "**/*.js", "**/*.config.ts", "**/*.config.js"],
+    ignores: [
+      "build/",
+      "**/*.js",
+      "**/*.config.ts",
+      "**/*.config.js",
+      "**/*.config.mjs",
+    ],
   },
   eslint.configs.recommended,
   tseslint.configs.recommended,
@@ -15,7 +21,7 @@ export default tseslint.config(
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: "./tsconfig.json",
+        projectService: true,
       },
     },
     plugins: {

@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "files": [
-    "library.js",
-    "next.mjs",
-    "react-internal.js",
+    "base.mjs",
+    "react-internal.mjs",
     "server.mjs"
   ],
   "devDependencies": {

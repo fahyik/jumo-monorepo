@@ -7,10 +7,21 @@ export interface GetMealsInput {
   includeDeleted?: boolean;
   limit?: number;
   offset?: number;
+  from?: string;
+  to?: string;
+  timezone?: string;
 }
 
 export async function getMeals(input: GetMealsInput): Promise<Meal[]> {
-  const { userId, includeDeleted = false, limit = 50, offset = 0 } = input;
+  const {
+    userId,
+    includeDeleted = false,
+    limit = 50,
+    offset = 0,
+    from,
+    to,
+    timezone = "UTC",
+  } = input;
 
   const meals = await sql<Meal[]>`
     WITH meal_items_with_nutrients AS (
@@ -88,6 +99,8 @@ export async function getMeals(input: GetMealsInput): Promise<Meal[]> {
       LEFT JOIN meal_items_with_nutrients mi ON m.id = mi."mealId"
       WHERE m.user_id = ${userId}
       ${includeDeleted ? sql`` : sql`AND m.deleted_at IS NULL`}
+      ${from ? sql`AND m.consumed_at AT TIME ZONE ${timezone} >= ${from}` : sql``}
+      ${to ? sql`AND m.consumed_at AT TIME ZONE ${timezone} < (${to}::date + interval '1 day')` : sql``}
       GROUP BY m.id
     )
     SELECT

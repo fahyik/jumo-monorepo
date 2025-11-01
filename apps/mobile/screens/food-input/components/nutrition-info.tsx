@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 
@@ -9,7 +10,7 @@ import { NutrientRow } from "./nutrient-row";
 import { ProviderFood } from "@jumo-monorepo/interfaces";
 
 import { ThemedText } from "@/components/ThemedText";
-import { supabase } from "@/lib/supabase";
+import { getMealItemImage } from "@/lib/queries/get-meal-item-image";
 import { createThemedStyles } from "@/lib/utils";
 import { useThemedStyles } from "@/providers/theme-provider";
 
@@ -26,6 +27,7 @@ interface NutritionInfoProps {
 
 export function NutritionInfo({ data }: NutritionInfoProps) {
   const styles = useThemedStyles(themedStyles);
+  const queryClient = useQueryClient();
   const [multiplier, setMultiplier] = useState(1);
   const [imageUri, setImageUri] = useState<string>("");
 
@@ -47,18 +49,22 @@ export function NutritionInfo({ data }: NutritionInfoProps) {
       if (data.foodData.image.type === "external") {
         setImageUri(data.foodData.image.url);
       } else if (data.foodData.image.type === "storage") {
-        const { data: imageUrl } = await supabase.storage
-          .from(data.foodData.image.bucket)
-          .getPublicUrl(data.foodData.image.path);
-
-        if (imageUrl?.publicUrl) {
-          setImageUri(imageUrl.publicUrl);
+        try {
+          const imagePath = data.foodData.image.path;
+          const signedUrl = await queryClient.fetchQuery({
+            queryKey: ["mealItemImage", imagePath],
+            queryFn: () => getMealItemImage(imagePath),
+            staleTime: Infinity,
+          });
+          setImageUri(signedUrl);
+        } catch (error) {
+          console.warn("Failed to fetch image:", error);
         }
       }
     };
 
     fetchImageUri();
-  }, [data.foodData.image]);
+  }, [data.foodData.image, queryClient]);
 
   // Calculate adjusted nutrition based on user's portion size
   const servingSize = data.foodData.servingSize
